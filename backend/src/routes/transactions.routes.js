@@ -1,4 +1,5 @@
 const express = require("express");
+const validateTransactionMiddleware = require("../middleware/validateTransaction.middleware");
 
 const {
     getTransactions,
@@ -11,7 +12,11 @@ const {
 const router = express.Router();
 
 router.get("/", getTransactions);
-router.post("/", createTransaction);
+router.post(
+    "/",
+    validateTransactionMiddleware,
+    createTransaction
+);
 router.get("/:id", getTransactionById);
 router.delete("/:id", deleteTransaction);
 router.patch("/:id", updateTransaction);

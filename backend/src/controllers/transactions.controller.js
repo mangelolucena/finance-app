@@ -36,25 +36,6 @@ const createTransaction = async (req, res) => {
             transaction_date,
         } = req.body;
 
-        // Validation
-        if (!user_id) {
-            return res.status(400).json({
-                message: "user_id is required",
-            });
-        }
-
-        if (!amount) {
-            return res.status(400).json({
-                message: "amount is required",
-            });
-        }
-
-        if (type !== "income" && type !== "expense") {
-            return res.status(400).json({
-                message: "type must be income or expense",
-            });
-        }
-
         const result = await pool.query(
             `
             INSERT INTO transactions (
