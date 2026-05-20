@@ -57,32 +57,6 @@ function App() {
     fetchInitialData();
   }, []);
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        setLoading(true);
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        const response = await fetch("http://localhost:3000/transactions");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch transactions");
-        }
-
-        const data: Transaction[] = await response.json();
-        setTransactions(data);
-      } catch (error) {
-        setError("Something went wrong while loading transactions.");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTransactions();
-  }, []);
-
   const handleAddTransaction = async () => {
     try {
       const response = await fetch("http://localhost:3000/transactions", {
@@ -102,10 +76,20 @@ function App() {
 
       const newTransaction = await response.json();
 
-      setTransactions((prev) => [newTransaction, ...prev]);
+      const selectedCategory = categories.find(
+        (category) => category.id === selectedCategoryId
+      );
+
+      const transactionWithCategoryName = {
+        ...newTransaction,
+        category_name: selectedCategory?.name ?? null,
+      };
+
+      setTransactions((prev) => [transactionWithCategoryName, ...prev]);
 
       setDescription("");
       setAmount("");
+      setSelectedCategoryId("");
 
     } catch (error) {
       console.error(error);
