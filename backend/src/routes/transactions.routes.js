@@ -7,6 +7,7 @@ const {
     getTransactionById,
     deleteTransaction,
     updateTransaction,
+    getAllCategories,
 } = require("../controllers/transactions.controller");
 
 const router = express.Router();

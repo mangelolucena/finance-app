@@ -1,6 +1,7 @@
 require("dotenv").config();
 const loggerMiddleware = require("./middleware/logger.middleware");
 const transactionsRoutes = require("./routes/transactions.routes");
+const categoriesRoutes = require("./routes/categories.routes");
 
 const express = require("express");
 const cors = require("cors");
@@ -13,8 +14,7 @@ app.use(loggerMiddleware);
 
 
 app.use("/transactions", transactionsRoutes);
-
-
+app.use("/categories", categoriesRoutes);
 
 const PORT = process.env.PORT || 3000;
 
