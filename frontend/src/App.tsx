@@ -15,8 +15,10 @@ function App() {
   const [error, setError] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [editingTransactionId, setEditingTransactionId] = useState<string | null>(null);
   const [transactionType, setTransactionType] =
     useState<"income" | "expense">("expense");
+
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -60,14 +62,13 @@ function App() {
   }, []);
 
   const handleAddTransaction = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/transactions", {
-        method: "POST",
+    if (editingTransactionId) {
+      await fetch(`http://localhost:3000/transactions/${editingTransactionId}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: "36dba13f-f67f-4c64-94a1-7ec8dd29353c",
           category_id: selectedCategoryId,
           amount: Number(amount),
           type: transactionType,
@@ -76,25 +77,45 @@ function App() {
         }),
       });
 
-      const newTransaction = await response.json();
+      setEditingTransactionId(null);
+    } else {
+      // existing POST logic here
+      try {
+        const response = await fetch("http://localhost:3000/transactions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: "36dba13f-f67f-4c64-94a1-7ec8dd29353c",
+            category_id: selectedCategoryId,
+            amount: Number(amount),
+            type: transactionType,
+            description,
+            transaction_date: new Date(),
+          }),
+        });
 
-      const selectedCategory = categories.find(
-        (category) => category.id === selectedCategoryId
-      );
+        const newTransaction = await response.json();
 
-      const transactionWithCategoryName = {
-        ...newTransaction,
-        category_name: selectedCategory?.name ?? null,
-      };
+        const selectedCategory = categories.find(
+          (category) => category.id === selectedCategoryId
+        );
 
-      setTransactions((prev) => [transactionWithCategoryName, ...prev]);
+        const transactionWithCategoryName = {
+          ...newTransaction,
+          category_name: selectedCategory?.name ?? null,
+        };
 
-      setDescription("");
-      setAmount("");
-      setSelectedCategoryId("");
+        setTransactions((prev) => [transactionWithCategoryName, ...prev]);
 
-    } catch (error) {
-      console.error(error);
+        setDescription("");
+        setAmount("");
+        setSelectedCategoryId("");
+
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -110,6 +131,13 @@ function App() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleStartEdit = (transaction: Transaction) => {
+    setEditingTransactionId(transaction.id);
+    setDescription(transaction.description);
+    setAmount(transaction.amount);
+    setTransactionType(transaction.type);
   };
 
   const totalIncome = transactions
@@ -137,7 +165,11 @@ function App() {
           totalExpenses={totalExpenses}
           balance={balance}
         />
-
+        {editingTransactionId && (
+          <p className="mb-4 text-sm text-blue-600">
+            Editing transaction: {editingTransactionId}
+          </p>
+        )}
         <AddTransactionForm
           description={description}
           amount={amount}
@@ -146,12 +178,10 @@ function App() {
           onSubmit={handleAddTransaction}
           categories={categories}
           selectedCategoryId={selectedCategoryId}
-          onCategoryChange={(value) => {
-            setSelectedCategoryId(value);
-            console.log("Selected category ID:", value);
-          }}
+          onCategoryChange={setSelectedCategoryId}
           transactionType={transactionType}
           onTransactionTypeChange={setTransactionType}
+          isEditing={!!editingTransactionId}
         />
 
         <TransactionFilter
@@ -170,12 +200,9 @@ function App() {
           {filteredTransactions.map((transaction) => (
             <TransactionCard
               key={transaction.id}
-              id={transaction.id}
-              description={transaction.description}
-              amount={transaction.amount}
-              type={transaction.type}
-              category_name={transaction.category_name}
+              transaction={transaction}
               onDelete={handleDeleteTransaction}
+              onEdit={handleStartEdit}
             />
           ))}
         </div>

@@ -11,6 +11,7 @@ type AddTransactionFormProps = {
     onCategoryChange: (value: string) => void;
     transactionType: "income" | "expense"
     onTransactionTypeChange: (value: "income" | "expense") => void;
+    isEditing?: boolean;
 };
 
 
@@ -26,11 +27,14 @@ function AddTransactionForm({
     categories,
     transactionType,
     onTransactionTypeChange,
+    isEditing = false,
 }: AddTransactionFormProps) {
     return (
         <div className="mb-6 rounded-xl bg-white p-4 shadow">
 
-            <h2 className="mb-4 text-lg font-semibold">Add Transaction</h2>
+            <h2 className="mb-4 text-lg font-semibold">
+                {isEditing ? "Edit Transaction" : "Add Transaction"}
+            </h2>
 
             <div className="flex flex-col gap-3 md:flex-row">
                 <input
@@ -74,7 +78,7 @@ function AddTransactionForm({
                     className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
                     onClick={onSubmit}
                 >
-                    Add Transaction
+                    {isEditing ? "Update" : "Add"}
                 </button>
             </div>
         </div>
