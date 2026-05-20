@@ -14,12 +14,40 @@ function App() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // useEffect(() => {
+  //   fetch("http://localhost:3000/transactions")
+  //     .then((res) => res.json())
+  //     .then((data: Transaction[]) => setTransactions(data))
+  //     .catch((error) => console.error(error));
+  // }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/transactions")
-      .then((res) => res.json())
-      .then((data: Transaction[]) => setTransactions(data))
-      .catch((error) => console.error(error));
+    const fetchTransactions = async () => {
+      try {
+        setLoading(true);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        const response = await fetch("http://localhost:3000/transactions");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+
+        const data: Transaction[] = await response.json();
+        setTransactions(data);
+      } catch (error) {
+        setError("Something went wrong while loading transactions.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
   }, []);
 
   const handleAddTransaction = async () => {
@@ -82,6 +110,7 @@ function App() {
 
   return (
     <main style={{ padding: 24 }}>
+
       <div style={{ marginBottom: 16 }}>
         <button onClick={() => setFilterType("all")}>All</button>
         <button onClick={() => setFilterType("income")}>Income</button>
@@ -121,6 +150,13 @@ function App() {
           Add Transaction
         </button>
       </div>
+      {loading && <p>Loading transactions...</p>}
+
+      {error && <p>{error}</p>}
+
+      {!loading && !error && filteredTransactions.length === 0 && (
+        <p>No transactions found.</p>
+      )}
       {filteredTransactions.map((transaction) => (
         <div key={transaction.id}>
           <strong>{transaction.description}</strong>
