@@ -109,67 +109,114 @@ function App() {
       : transactions.filter((transaction) => transaction.type === filterType);
 
   return (
-    <main style={{ padding: 24 }}>
+    <main className="min-h-screen bg-gray-100 p-6">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="mb-6 text-3xl font-bold text-gray-900">Finance App</h1>
 
-      <div style={{ marginBottom: 16 }}>
-        <button onClick={() => setFilterType("all")}>All</button>
-        <button onClick={() => setFilterType("income")}>Income</button>
-        <button onClick={() => setFilterType("expense")}>Expense</button>
-      </div>
-      <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
-        <div>
-          <strong>Income</strong>
-          <p>₱{totalIncome}</p>
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="rounded-xl bg-white p-4 shadow">
+            <p className="text-sm text-gray-500">Income</p>
+            <p className="text-2xl font-bold text-green-600">₱{totalIncome}</p>
+          </div>
+
+          <div className="rounded-xl bg-white p-4 shadow">
+            <p className="text-sm text-gray-500">Expenses</p>
+            <p className="text-2xl font-bold text-red-600">₱{totalExpenses}</p>
+          </div>
+
+          <div className="rounded-xl bg-white p-4 shadow">
+            <p className="text-sm text-gray-500">Balance</p>
+            <p className="text-2xl font-bold text-gray-900">₱{balance}</p>
+          </div>
         </div>
 
-        <div>
-          <strong>Expenses</strong>
-          <p>₱{totalExpenses}</p>
+        <div className="mb-6 rounded-xl bg-white p-4 shadow">
+          <h2 className="mb-4 text-lg font-semibold">Add Transaction</h2>
+
+          <div className="flex flex-col gap-3 md:flex-row">
+            <input
+              className="rounded-lg border border-gray-300 px-3 py-2"
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+
+            <input
+              className="rounded-lg border border-gray-300 px-3 py-2"
+              placeholder="Amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+
+            <button
+              className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+              onClick={handleAddTransaction}
+            >
+              Add Transaction
+            </button>
+          </div>
         </div>
 
-        <div>
-          <strong>Balance</strong>
-          <p>₱{balance}</p>
-        </div>
-      </div>
-      <h1>Finance App</h1>
-      <div style={{ marginBottom: 24 }}>
-        <input
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <div className="mb-4 flex gap-2">
+          <button
+            className={`rounded-lg px-4 py-2 shadow ${filterType === "all"
+              ? "bg-blue-600 text-white"
+              : "bg-white text-gray-700"
+              }`}
+            onClick={() => setFilterType("all")}>
+            All
+          </button>
 
-        <input
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
+          <button
+            className={`rounded-lg px-4 py-2 shadow ${filterType === "income"
+              ? "bg-green-600 text-white"
+              : "bg-white text-gray-700"
+              }`}
+            onClick={() => setFilterType("income")}>
+            Income
+          </button>
 
-        <button onClick={handleAddTransaction}>
-          Add Transaction
-        </button>
-      </div>
-      {loading && <p>Loading transactions...</p>}
-
-      {error && <p>{error}</p>}
-
-      {!loading && !error && filteredTransactions.length === 0 && (
-        <p>No transactions found.</p>
-      )}
-      {filteredTransactions.map((transaction) => (
-        <div key={transaction.id}>
-          <strong>{transaction.description}</strong>
-          <p>
-            {transaction.type} - ₱{transaction.amount} -{" "}
-            {transaction.category_name}
-          </p>
-
-          <button onClick={() => handleDeleteTransaction(transaction.id)}>
-            Delete
+          <button
+            className={`rounded-lg px-4 py-2 shadow ${filterType === "expense"
+              ? "bg-red-600 text-white"
+              : "bg-white text-gray-700"
+              }`}
+            onClick={() => setFilterType("expense")}>
+            Expense
           </button>
         </div>
-      ))}
+
+        {loading && <p className="text-gray-500">Loading transactions...</p>}
+
+        {error && <p className="text-red-600">{error}</p>}
+
+        {!loading && !error && filteredTransactions.length === 0 && (
+          <p className="text-gray-500">No transactions found.</p>
+        )}
+
+        <div className="space-y-3">
+          {filteredTransactions.map((transaction) => (
+            <div
+              key={transaction.id}
+              className="flex items-center justify-between rounded-xl bg-white p-4 shadow"
+            >
+              <div>
+                <strong className="text-gray-900">{transaction.description}</strong>
+                <p className="text-sm text-gray-500">
+                  {transaction.type} - ₱{transaction.amount} - {transaction.category_name}
+                </p>
+              </div>
+
+              <button
+                className="rounded-lg bg-red-100 px-3 py-1 text-sm font-medium text-red-700 hover:bg-red-200"
+                onClick={() => handleDeleteTransaction(transaction.id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </main>
   );
 }
