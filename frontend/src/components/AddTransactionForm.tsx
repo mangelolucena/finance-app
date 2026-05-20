@@ -9,6 +9,8 @@ type AddTransactionFormProps = {
     categories: Category[];
     selectedCategoryId: string;
     onCategoryChange: (value: string) => void;
+    transactionType: "income" | "expense"
+    onTransactionTypeChange: (value: "income" | "expense") => void;
 };
 
 
@@ -21,7 +23,9 @@ function AddTransactionForm({
     onSubmit,
     selectedCategoryId,
     onCategoryChange,
-    categories
+    categories,
+    transactionType,
+    onTransactionTypeChange,
 }: AddTransactionFormProps) {
     return (
         <div className="mb-6 rounded-xl bg-white p-4 shadow">
@@ -54,6 +58,16 @@ function AddTransactionForm({
                             {category.name}
                         </option>
                     ))}
+                </select>
+                <select
+                    className="rounded-lg border border-gray-300 px-3 py-2"
+                    value={transactionType}
+                    onChange={(e) =>
+                        onTransactionTypeChange(e.target.value as "income" | "expense")
+                    }
+                >
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
                 </select>
 
                 <button

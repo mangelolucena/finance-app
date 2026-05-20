@@ -15,6 +15,8 @@ function App() {
   const [error, setError] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [transactionType, setTransactionType] =
+    useState<"income" | "expense">("expense");
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -68,7 +70,7 @@ function App() {
           user_id: "36dba13f-f67f-4c64-94a1-7ec8dd29353c",
           category_id: selectedCategoryId,
           amount: Number(amount),
-          type: "expense",
+          type: transactionType,
           description,
           transaction_date: new Date(),
         }),
@@ -148,6 +150,8 @@ function App() {
             setSelectedCategoryId(value);
             console.log("Selected category ID:", value);
           }}
+          transactionType={transactionType}
+          onTransactionTypeChange={setTransactionType}
         />
 
         <TransactionFilter
