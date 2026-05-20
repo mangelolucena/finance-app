@@ -4,6 +4,7 @@ import AddTransactionForm from "./components/AddTransactionForm";
 import SummaryCards from "./components/SummaryCards";
 import TransactionFilter from "./components/TransactionFilter";
 import type { Transaction } from "./types/transaction";
+import type { Category } from "./types/category";
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -12,6 +13,49 @@ function App() {
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setLoading(true);
+
+        const transactionsResponse = await fetch(
+          "http://localhost:3000/transactions"
+        );
+
+        if (!transactionsResponse.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+
+        const transactionsData: Transaction[] =
+          await transactionsResponse.json();
+
+        setTransactions(transactionsData);
+
+        const categoriesResponse = await fetch(
+          "http://localhost:3000/categories/all"
+        );
+
+        if (!categoriesResponse.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+
+        const categoriesData: Category[] =
+          await categoriesResponse.json();
+
+        setCategories(categoriesData);
+      } catch (error) {
+        setError("Something went wrong while loading data.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, []);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -48,7 +92,7 @@ function App() {
         },
         body: JSON.stringify({
           user_id: "36dba13f-f67f-4c64-94a1-7ec8dd29353c",
-          category_id: "98d0729d-fea8-4d75-bd02-d185979c7b66",
+          category_id: selectedCategoryId,
           amount: Number(amount),
           type: "expense",
           description,
@@ -114,6 +158,12 @@ function App() {
           onDescriptionChange={setDescription}
           onAmountChange={setAmount}
           onSubmit={handleAddTransaction}
+          categories={categories}
+          selectedCategoryId={selectedCategoryId}
+          onCategoryChange={(value) => {
+            setSelectedCategoryId(value);
+            console.log("Selected category ID:", value);
+          }}
         />
 
         <TransactionFilter
