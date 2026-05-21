@@ -5,11 +5,6 @@ const validateTransactionMiddleware = (req, res, next) => {
         type,
     } = req.body;
 
-    if (!user_id) {
-        return res.status(400).json({
-            message: "user_id is required",
-        });
-    }
 
     if (!amount) {
         return res.status(400).json({

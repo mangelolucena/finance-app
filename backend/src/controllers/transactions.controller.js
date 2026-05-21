@@ -1,6 +1,7 @@
 const pool = require("../db/pool");
 
 const getTransactions = async (req, res) => {
+    const user_id = req.user.userId;
     try {
         const result = await pool.query(`
             SELECT
@@ -14,8 +15,9 @@ const getTransactions = async (req, res) => {
             FROM transactions t
             LEFT JOIN categories c
             ON t.category_id = c.id
+            WHERE t.user_id = $1
             ORDER BY t.transaction_date DESC;
-        `);
+        `, [user_id]);
 
         res.json(result.rows);
     } catch (error) {
