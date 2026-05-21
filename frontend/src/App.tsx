@@ -18,6 +18,12 @@ function App() {
   const [editingTransactionId, setEditingTransactionId] = useState<string | null>(null);
   const [transactionType, setTransactionType] =
     useState<"income" | "expense">("expense");
+  const [validationErrors, setValidationErrors] = useState<{
+    description?: string;
+    amount?: string;
+    category?: string;
+  }>({});
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const fetchInitialData = async () => {
     try {
@@ -61,24 +67,60 @@ function App() {
     fetchInitialData();
   }, []);
 
+  const validateForm = (): boolean => {
+    const errors: typeof validationErrors = {};
+
+    if (!description.trim()) {
+      errors.description = "Description is required";
+    }
+
+    if (!amount) {
+      errors.amount = "Amount is required";
+    } else if (isNaN(Number(amount)) || Number(amount) <= 0) {
+      errors.amount = "Amount must be a valid positive number";
+    }
+
+    if (!selectedCategoryId) {
+      errors.category = "Please select a category";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleAddTransaction = async () => {
+    if (!validateForm()) {
+      showToast("Please fill all the fields", "error");
+      return;
+    }
     if (editingTransactionId) {
-      await fetch(`http://localhost:3000/transactions/${editingTransactionId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          category_id: selectedCategoryId,
-          amount: Number(amount),
-          type: transactionType,
-          description,
-          transaction_date: new Date(),
-        }),
-      });
-      fetchInitialData();
-      setEditingTransactionId(null);
+      try {
+        await fetch(`http://localhost:3000/transactions/${editingTransactionId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            category_id: selectedCategoryId,
+            amount: Number(amount),
+            type: transactionType,
+            description,
+            transaction_date: new Date(),
+          }),
+        });
+        fetchInitialData();
+        setEditingTransactionId(null);
+        setValidationErrors({});
+        showToast("Transaction updated successfully", "success");
+      } catch (error) {
+        console.error(error);
+        showToast("Failed to update transaction", "error");
+      }
     } else {
       // existing POST logic here
       try {
@@ -113,9 +155,12 @@ function App() {
         setDescription("");
         setAmount("");
         setSelectedCategoryId("");
+        setValidationErrors({});
         fetchInitialData();
+        showToast("Transaction added successfully", "success");
       } catch (error) {
         console.error(error);
+        showToast("Failed to add transaction", "error");
       }
     }
   };
@@ -162,6 +207,12 @@ function App() {
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-6 text-3xl font-bold text-gray-900">Finance App</h1>
 
+        {toast && (
+          <div className={`mb-4 rounded-lg p-4 text-white ${toast.type === "success" ? "bg-green-500" : "bg-red-500"}`}>
+            {toast.message}
+          </div>
+        )}
+
         <SummaryCards
           totalIncome={totalIncome}
           totalExpenses={totalExpenses}
@@ -184,6 +235,7 @@ function App() {
           transactionType={transactionType}
           onTransactionTypeChange={setTransactionType}
           isEditing={!!editingTransactionId}
+          validationErrors={validationErrors}
         />
 
         <TransactionFilter
