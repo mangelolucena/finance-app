@@ -8,24 +8,19 @@ const {
     getTransactionById,
     deleteTransaction,
     updateTransaction,
-    getAllCategories,
 } = require("../controllers/transactions.controller");
 
 const router = express.Router();
 
-router.get("/", getTransactions);
-router.post(
-    "/",
-    validateTransactionMiddleware,
-    createTransaction
-);
-router.get("/:id", getTransactionById);
-router.delete("/:id", deleteTransaction);
-router.patch("/:id", updateTransaction);
+router.get("/", authMiddleware, getTransactions);
 router.post(
     "/",
     authMiddleware,
+    validateTransactionMiddleware,
     createTransaction
 );
+router.get("/:id", authMiddleware, getTransactionById);
+router.delete("/:id", authMiddleware, deleteTransaction);
+router.patch("/:id", authMiddleware, updateTransaction);
 
 module.exports = router;
