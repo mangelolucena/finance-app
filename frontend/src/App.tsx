@@ -3,6 +3,7 @@ import TransactionCard from "./components/TransactionCard";
 import AddTransactionForm from "./components/AddTransactionForm";
 import SummaryCards from "./components/SummaryCards";
 import TransactionFilter from "./components/TransactionFilter";
+import LoginForm from "./components/LoginForm";
 import type { Transaction } from "./types/transaction";
 import type { Category } from "./types/category";
 
@@ -24,13 +25,18 @@ function App() {
     category?: string;
   }>({});
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [token, setToken] = useState("");
 
   const fetchInitialData = async () => {
     try {
       setLoading(true);
 
       const transactionsResponse = await fetch(
-        "http://localhost:3000/transactions"
+        "http://localhost:3000/transactions", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
       );
 
       if (!transactionsResponse.ok) {
@@ -43,7 +49,12 @@ function App() {
       setTransactions(transactionsData);
 
       const categoriesResponse = await fetch(
-        "http://localhost:3000/categories/all"
+        "http://localhost:3000/categories/all",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (!categoriesResponse.ok) {
@@ -64,8 +75,9 @@ function App() {
 
 
   useEffect(() => {
+    if (!token) return;
     fetchInitialData();
-  }, []);
+  }, [token]);
 
   const validateForm = (): boolean => {
     const errors: typeof validationErrors = {};
@@ -103,6 +115,7 @@ function App() {
         await fetch(`http://localhost:3000/transactions/${editingTransactionId}`, {
           method: "PATCH",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -127,10 +140,10 @@ function App() {
         const response = await fetch("http://localhost:3000/transactions", {
           method: "POST",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            user_id: "36dba13f-f67f-4c64-94a1-7ec8dd29353c",
             category_id: selectedCategoryId,
             amount: Number(amount),
             type: transactionType,
@@ -169,6 +182,9 @@ function App() {
     try {
       await fetch(`http://localhost:3000/transactions/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setTransactions((prev) =>
@@ -201,6 +217,10 @@ function App() {
     filterType === "all"
       ? transactions
       : transactions.filter((transaction) => transaction.type === filterType);
+
+  if (!token) {
+    return <LoginForm onLogin={setToken} />;
+  }
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
