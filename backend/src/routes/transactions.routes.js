@@ -1,5 +1,6 @@
 const express = require("express");
 const validateTransactionMiddleware = require("../middleware/validateTransaction.middleware");
+const authMiddleware = require("../middleware/auth.middleware");
 
 const {
     getTransactions,
@@ -21,5 +22,10 @@ router.post(
 router.get("/:id", getTransactionById);
 router.delete("/:id", deleteTransaction);
 router.patch("/:id", updateTransaction);
+router.post(
+    "/",
+    authMiddleware,
+    createTransaction
+);
 
 module.exports = router;

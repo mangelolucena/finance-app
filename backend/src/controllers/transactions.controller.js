@@ -29,13 +29,14 @@ const getTransactions = async (req, res) => {
 const createTransaction = async (req, res) => {
     try {
         const {
-            user_id,
             category_id,
             amount,
             type,
             description,
             transaction_date,
         } = req.body;
+
+        const user_id = req.user.userId;
 
         const result = await pool.query(
             `
