@@ -9,6 +9,7 @@ const getTransactions = async (req, res) => {
                 t.type,
                 t.description,
                 t.transaction_date,
+                c.id AS category_id,
                 c.name AS category_name
             FROM transactions t
             LEFT JOIN categories c
@@ -74,7 +75,8 @@ const getTransactionById = async (req, res) => {
                 t.type,
                 t.description,
                 t.transaction_date,
-                c.name AS category_name
+                c.name AS category_name,
+                c.id AS category_id
             FROM transactions t
             LEFT JOIN categories c
             ON t.category_id = c.id
