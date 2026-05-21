@@ -19,47 +19,48 @@ function App() {
   const [transactionType, setTransactionType] =
     useState<"income" | "expense">("expense");
 
+  const fetchInitialData = async () => {
+    try {
+      setLoading(true);
+
+      const transactionsResponse = await fetch(
+        "http://localhost:3000/transactions"
+      );
+
+      if (!transactionsResponse.ok) {
+        throw new Error("Failed to fetch transactions");
+      }
+
+      const transactionsData: Transaction[] =
+        await transactionsResponse.json();
+
+      setTransactions(transactionsData);
+
+      const categoriesResponse = await fetch(
+        "http://localhost:3000/categories/all"
+      );
+
+      if (!categoriesResponse.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+
+      const categoriesData: Category[] =
+        await categoriesResponse.json();
+
+      setCategories(categoriesData);
+    } catch (error) {
+      setError("Something went wrong while loading data.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        setLoading(true);
-
-        const transactionsResponse = await fetch(
-          "http://localhost:3000/transactions"
-        );
-
-        if (!transactionsResponse.ok) {
-          throw new Error("Failed to fetch transactions");
-        }
-
-        const transactionsData: Transaction[] =
-          await transactionsResponse.json();
-
-        setTransactions(transactionsData);
-
-        const categoriesResponse = await fetch(
-          "http://localhost:3000/categories/all"
-        );
-
-        if (!categoriesResponse.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-
-        const categoriesData: Category[] =
-          await categoriesResponse.json();
-
-        setCategories(categoriesData);
-      } catch (error) {
-        setError("Something went wrong while loading data.");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchInitialData();
   }, []);
+
 
   const handleAddTransaction = async () => {
     if (editingTransactionId) {
@@ -76,7 +77,7 @@ function App() {
           transaction_date: new Date(),
         }),
       });
-
+      fetchInitialData();
       setEditingTransactionId(null);
     } else {
       // existing POST logic here
@@ -112,7 +113,7 @@ function App() {
         setDescription("");
         setAmount("");
         setSelectedCategoryId("");
-
+        fetchInitialData();
       } catch (error) {
         console.error(error);
       }
@@ -138,6 +139,7 @@ function App() {
     setDescription(transaction.description);
     setAmount(transaction.amount);
     setTransactionType(transaction.type);
+    setSelectedCategoryId(transaction.category_id);
   };
 
   const totalIncome = transactions
