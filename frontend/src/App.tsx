@@ -34,7 +34,7 @@ function App() {
       setLoading(true);
 
       const transactionsResponse = await fetch(
-        "http://localhost:3000/transactions", {
+        `${import.meta.env.VITE_API_URL}/transactions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -51,7 +51,7 @@ function App() {
       setTransactions(transactionsData);
 
       const categoriesResponse = await fetch(
-        "http://localhost:3000/categories/all",
+        `${import.meta.env.VITE_API_URL}/categories/all`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -114,7 +114,7 @@ function App() {
     }
     if (editingTransactionId) {
       try {
-        await fetch(`http://localhost:3000/transactions/${editingTransactionId}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/transactions/${editingTransactionId}`, {
           method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ function App() {
     } else {
       // existing POST logic here
       try {
-        const response = await fetch("http://localhost:3000/transactions", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -186,7 +186,7 @@ function App() {
 
   const handleDeleteTransaction = async (id: string) => {
     try {
-      await fetch(`http://localhost:3000/transactions/${id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/transactions/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
