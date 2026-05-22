@@ -25,7 +25,9 @@ function App() {
     category?: string;
   }>({});
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || "";
+  });
 
   const fetchInitialData = async () => {
     try {
@@ -203,6 +205,12 @@ function App() {
     setSelectedCategoryId(transaction.category_id);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    setTransactions([]);
+  };
+
   const totalIncome = transactions
     .filter((transaction) => transaction.type === "income")
     .reduce((sum, transaction) => sum + Number(transaction.amount), 0);
@@ -219,14 +227,28 @@ function App() {
       : transactions.filter((transaction) => transaction.type === filterType);
 
   if (!token) {
-    return <LoginForm onLogin={setToken} />;
+    return (
+      <LoginForm
+        onLogin={(newToken) => {
+          localStorage.setItem("token", newToken);
+          setToken(newToken);
+        }}
+      />
+    );
   }
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-6 text-3xl font-bold text-gray-900">Finance App</h1>
-
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-900">Finance App</h1>
+          <button
+            className="rounded-lg bg-gray-900 px-4 py-2 text-white hover:bg-gray-700"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
         {toast && (
           <div className={`mb-4 rounded-lg p-4 text-white ${toast.type === "success" ? "bg-green-500" : "bg-red-500"}`}>
             {toast.message}
