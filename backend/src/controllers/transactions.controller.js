@@ -104,14 +104,15 @@ const getTransactionById = async (req, res) => {
 const deleteTransaction = async (req, res) => {
     try {
         const { id } = req.params;
+        const user_id = req.user.userId;
 
         const result = await pool.query(
             `
             DELETE FROM transactions
-            WHERE id = $1
+            WHERE id = $1 AND user_id = $2
             RETURNING *;
             `,
-            [id]
+            [id, user_id]
         );
 
         if (result.rows.length === 0) {
@@ -135,6 +136,8 @@ const updateTransaction = async (req, res) => {
         const { id } = req.params;
         const { category_id, amount, type, description, transaction_date } = req.body;
 
+        const user_id = req.user.userId;
+
         const result = await pool.query(
             `
             UPDATE transactions
@@ -144,10 +147,10 @@ const updateTransaction = async (req, res) => {
                 type = $3,
                 description = $4,
                 transaction_date = $5
-            WHERE id = $6
+            WHERE id = $6 AND user_id = $7
             RETURNING *;
             `,
-            [category_id, amount, type, description, transaction_date, id]
+            [category_id, amount, type, description, transaction_date, id, user_id]
         );
 
         if (result.rows.length === 0) {

@@ -128,9 +128,13 @@ function App() {
             transaction_date: new Date(),
           }),
         });
-        fetchInitialData();
         setEditingTransactionId(null);
         setValidationErrors({});
+        setDescription("");
+        setAmount("");
+        setSelectedCategoryId("");
+        setValidationErrors({});
+        fetchInitialData();
         showToast("Transaction updated successfully", "success");
       } catch (error) {
         console.error(error);
