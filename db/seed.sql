@@ -12,13 +12,13 @@ VALUES (
 -- =====================================
 -- CATEGORIES
 -- =====================================
-
-INSERT INTO categories (user_id, name)
+INSERT INTO categories (name)
 VALUES
-('YOUR_USER_ID', 'Food'),
-('YOUR_USER_ID', 'Transport'),
-('YOUR_USER_ID', 'Salary');
-
+('Food'),
+('Transport'),
+('Salary'),
+('Shopping'),
+('Bills');
 
 -- =====================================
 -- TRANSACTIONS
