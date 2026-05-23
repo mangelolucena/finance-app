@@ -1,3 +1,5 @@
+const testArray = [1, 2, 3];
+console.log("Last item:", testArray.at(-1));
 require("dotenv").config();
 const loggerMiddleware = require("./middleware/logger.middleware");
 const transactionsRoutes = require("./routes/transactions.routes");
