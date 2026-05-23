@@ -21,6 +21,9 @@ app.use(loggerMiddleware);
 app.use("/transactions", transactionsRoutes);
 app.use("/categories", categoriesRoutes);
 app.use("/auth", authRoutes);
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+});
 
 
 const PORT = process.env.PORT || 3000;

@@ -61,5 +61,9 @@ jobs:
       - name: Build backend Docker image
         run: docker build -t finance-backend ./backend
 
-      - name: Run backend container
-        run: docker run finance-backend
+      - name: Run backend container in background
+        run: |
+          docker run -d --name finance-backend-test -p 3000:3000 finance-backend
+          sleep 5
+          curl --fail http://localhost:3000/health
+          docker stop finance-backend-test
