@@ -7,7 +7,6 @@ const authRoutes = require("./routes/auth.routes");
 
 const express = require("express");
 const cors = require("cors");
-throw new Error("Intentional Docker runtime failure");
 
 
 
