@@ -62,12 +62,4 @@ jobs:
         run: docker build -t finance-backend ./backend
 
       - name: Run backend container
-        run: |
-          docker run -d --name finance-backend-test -p 3000:3000 \
-            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-            -e JWT_SECRET="test_secret" \
-            finance-backend
-
-          sleep 5
-
-          docker logs finance-backend-test
+        run: docker run finance-backend
