@@ -7,7 +7,6 @@ type LoginFormProps = {
 function LoginForm({ onLogin }: LoginFormProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const total: number = "hello";
 
     const handleLogin = async () => {
         try {
