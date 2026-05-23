@@ -51,3 +51,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build backend Docker image
+        run: docker build -t finance-backend ./backend
