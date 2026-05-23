@@ -17,13 +17,13 @@ app.use(cors());
 app.use(express.json());
 app.use(loggerMiddleware);
 
-
-app.use("/transactions", transactionsRoutes);
-app.use("/categories", categoriesRoutes);
-app.use("/auth", authRoutes);
 app.get("/health", (req, res) => {
     res.json({ status: "ok" });
 });
+app.use("/transactions", transactionsRoutes);
+app.use("/categories", categoriesRoutes);
+app.use("/auth", authRoutes);
+
 
 
 const PORT = process.env.PORT || 3000;
