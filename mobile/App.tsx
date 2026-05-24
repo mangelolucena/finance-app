@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 
 import LoginScreen from "./src/screens/LoginScreen";
+import RegisterScreen from "./src/screens/RegisterScreen";
 import TransactionsScreen from "./src/screens/TransactionsScreen";
 
 const TOKEN_KEY = "finance_app_token";
@@ -9,6 +10,7 @@ const TOKEN_KEY = "finance_app_token";
 export default function App() {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
   useEffect(() => {
     const loadToken = async () => {
@@ -36,8 +38,17 @@ export default function App() {
 
   if (loading) return null;
 
+  if (!token && authMode === "register") {
+    return <RegisterScreen onBackToLogin={() => setAuthMode("login")} />;
+  }
+
   if (!token) {
-    return <LoginScreen onLogin={handleLogin} />;
+    return (
+      <LoginScreen
+        onLogin={handleLogin}
+        onGoToRegister={() => setAuthMode("register")}
+      />
+    );
   }
 
   return <TransactionsScreen token={token} onLogout={handleLogout} />;

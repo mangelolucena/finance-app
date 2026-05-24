@@ -11,10 +11,12 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 type Props = {
     onLogin: (token: string) => void;
+    onGoToRegister: () => void;
 };
 
 export default function LoginScreen({
     onLogin,
+    onGoToRegister,
 }: Props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -96,6 +98,7 @@ export default function LoginScreen({
                 title="Login"
                 onPress={handleLogin}
             />
+            <Button title="Create Account" onPress={onGoToRegister} />
         </SafeAreaView>
     );
 }
