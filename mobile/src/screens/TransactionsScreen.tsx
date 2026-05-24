@@ -224,16 +224,11 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
     }, []);
 
     const calculateSummary = () => {
-        const filtered =
-            filter === "all"
-                ? transactions
-                : transactions.filter((t) => t.type === filter);
-
-        const income = filtered
+        const income = transactions
             .filter((t) => t.type === "income")
             .reduce((sum, t) => sum + Number(t.amount), 0);
 
-        const expenses = filtered
+        const expenses = transactions
             .filter((t) => t.type === "expense")
             .reduce((sum, t) => sum + Number(t.amount), 0);
 
