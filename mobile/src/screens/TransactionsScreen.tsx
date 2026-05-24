@@ -253,10 +253,11 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
     const filteredTransactions = getFilteredTransactions();
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }} edges={["top", "bottom"]}>
             <ScrollView
-                style={{ flex: 1, padding: 20 }}
+                style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
             >
                 {/* Header */}
                 <View
@@ -265,6 +266,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         justifyContent: "space-between",
                         alignItems: "center",
                         marginBottom: 24,
+                        paddingHorizontal: 8,
                     }}
                 >
                     <Text style={{ fontSize: 28, fontWeight: "bold" }}>
@@ -292,6 +294,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         justifyContent: "space-between",
                         marginBottom: 24,
                         gap: 12,
+                        paddingHorizontal: 8,
                     }}
                 >
                     {/* Income Card */}
@@ -371,6 +374,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         borderRadius: 8,
                         padding: 16,
                         marginBottom: 24,
+                        marginHorizontal: 8,
                     }}
                 >
                     <Text
@@ -755,6 +759,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         flexDirection: "row",
                         gap: 8,
                         marginBottom: 16,
+                        paddingHorizontal: 8,
                     }}
                 >
                     {(["all", "income", "expense"] as FilterType[]).map(
@@ -793,6 +798,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                     scrollEnabled={false}
                     data={filteredTransactions}
                     keyExtractor={(item) => item.id}
+                    contentContainerStyle={{ paddingHorizontal: 8 }}
                     renderItem={({ item }) => (
                         <View
                             style={{
