@@ -1,14 +1,19 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "PesoTrack",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.angelolucena.mobile",
+      "bundleIdentifier": "com.angelolucena.pesotrack",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
