@@ -289,15 +289,36 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                     </View>
 
                     {/* Summary Cards */}
+
                     <View
                         style={{
-                            flexDirection: "row",
                             justifyContent: "space-between",
                             marginBottom: 24,
                             gap: 12,
                             paddingHorizontal: 8,
                         }}
                     >
+                        <View
+                            style={{
+                                flex: 1,
+                                backgroundColor: "white",
+                                borderRadius: 8,
+                                padding: 16,
+                            }}
+                        >
+                            <Text style={{ color: "#666", marginBottom: 8 }}>
+                                Balance
+                            </Text>
+                            <Text
+                                style={{
+                                    fontSize: 24,
+                                    fontWeight: "bold",
+                                    color: "#1a1a2e",
+                                }}
+                            >
+                                ₱{summary.balance.toFixed(2)}
+                            </Text>
+                        </View>
                         {/* Income Card */}
                         <View
                             style={{
@@ -312,7 +333,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                             </Text>
                             <Text
                                 style={{
-                                    fontSize: 15,
+                                    fontSize: 24,
                                     fontWeight: "bold",
                                     color: "#10b981",
                                 }}
@@ -335,7 +356,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                             </Text>
                             <Text
                                 style={{
-                                    fontSize: 15,
+                                    fontSize: 24,
                                     fontWeight: "bold",
                                     color: "#ef4444",
                                 }}
@@ -345,27 +366,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         </View>
 
                         {/* Balance Card */}
-                        <View
-                            style={{
-                                flex: 1,
-                                backgroundColor: "white",
-                                borderRadius: 8,
-                                padding: 16,
-                            }}
-                        >
-                            <Text style={{ color: "#666", marginBottom: 8 }}>
-                                Balance
-                            </Text>
-                            <Text
-                                style={{
-                                    fontSize: 15,
-                                    fontWeight: "bold",
-                                    color: "#1a1a2e",
-                                }}
-                            >
-                                ₱{summary.balance.toFixed(2)}
-                            </Text>
-                        </View>
+
                     </View>
 
                     {/* Add Transaction Section */}
