@@ -97,7 +97,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                 const response = await fetch(
                     `${API_URL}/transactions/${editingId}`,
                     {
-                        method: "PUT",
+                        method: "PATCH",
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`,
