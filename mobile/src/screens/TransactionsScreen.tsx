@@ -9,7 +9,7 @@ import {
     ScrollView,
     Modal,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
     token: string;
@@ -253,427 +253,291 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
     const filteredTransactions = getFilteredTransactions();
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }} edges={["top", "bottom"]}>
-            <ScrollView
-                style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 20 }}
-            >
-                {/* Header */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 24,
-                        paddingHorizontal: 8,
-                    }}
+        <SafeAreaProvider>
+            <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }} edges={["top", "bottom"]}>
+                <ScrollView
+                    style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 20 }}
                 >
-                    <Text style={{ fontSize: 28, fontWeight: "bold" }}>
-                        Finance App
-                    </Text>
-                    <TouchableOpacity
-                        onPress={onLogout}
-                        style={{
-                            backgroundColor: "#1a1a2e",
-                            paddingHorizontal: 16,
-                            paddingVertical: 8,
-                            borderRadius: 8,
-                        }}
-                    >
-                        <Text style={{ color: "white", fontWeight: "600" }}>
-                            Logout
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Summary Cards */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginBottom: 24,
-                        gap: 12,
-                        paddingHorizontal: 8,
-                    }}
-                >
-                    {/* Income Card */}
-                    <View
-                        style={{
-                            flex: 1,
-                            backgroundColor: "white",
-                            borderRadius: 8,
-                            padding: 16,
-                        }}
-                    >
-                        <Text style={{ color: "#666", marginBottom: 8 }}>
-                            Income
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 15,
-                                fontWeight: "bold",
-                                color: "#10b981",
-                            }}
-                        >
-                            ₱{summary.income.toFixed(2)}
-                        </Text>
-                    </View>
-
-                    {/* Expenses Card */}
-                    <View
-                        style={{
-                            flex: 1,
-                            backgroundColor: "white",
-                            borderRadius: 8,
-                            padding: 16,
-                        }}
-                    >
-                        <Text style={{ color: "#666", marginBottom: 8 }}>
-                            Expenses
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 15,
-                                fontWeight: "bold",
-                                color: "#ef4444",
-                            }}
-                        >
-                            ₱{summary.expenses.toFixed(2)}
-                        </Text>
-                    </View>
-
-                    {/* Balance Card */}
-                    <View
-                        style={{
-                            flex: 1,
-                            backgroundColor: "white",
-                            borderRadius: 8,
-                            padding: 16,
-                        }}
-                    >
-                        <Text style={{ color: "#666", marginBottom: 8 }}>
-                            Balance
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 15,
-                                fontWeight: "bold",
-                                color: "#1a1a2e",
-                            }}
-                        >
-                            ₱{summary.balance.toFixed(2)}
-                        </Text>
-                    </View>
-                </View>
-
-                {/* Add Transaction Section */}
-                <View
-                    style={{
-                        backgroundColor: "white",
-                        borderRadius: 8,
-                        padding: 16,
-                        marginBottom: 24,
-                        marginHorizontal: 8,
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            marginBottom: 16,
-                        }}
-                    >
-                        Add Transaction
-                    </Text>
-
-                    <TextInput
-                        placeholder="Description"
-                        value={description}
-                        onChangeText={setDescription}
-                        style={{
-                            borderWidth: 1,
-                            borderColor: "#ddd",
-                            borderRadius: 8,
-                            padding: 12,
-                            marginBottom: 12,
-                            backgroundColor: "#f9f9f9",
-                        }}
-                    />
-
-                    <TextInput
-                        placeholder="Amount"
-                        value={amount}
-                        onChangeText={setAmount}
-                        keyboardType="decimal-pad"
-                        style={{
-                            borderWidth: 1,
-                            borderColor: "#ddd",
-                            borderRadius: 8,
-                            padding: 12,
-                            marginBottom: 12,
-                            backgroundColor: "#f9f9f9",
-                        }}
-                    />
-
+                    {/* Header */}
                     <View
                         style={{
                             flexDirection: "row",
-                            gap: 12,
-                            marginBottom: 12,
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 24,
+                            paddingHorizontal: 8,
                         }}
                     >
-                        {/* Category Dropdown */}
-                        <View style={{ flex: 1 }}>
-                            <TouchableOpacity
-                                onPress={() => setShowCategoryModal(true)}
+                        <Text style={{ fontSize: 28, fontWeight: "bold" }}>
+                            Finance App
+                        </Text>
+                        <TouchableOpacity
+                            onPress={onLogout}
+                            style={{
+                                backgroundColor: "#1a1a2e",
+                                paddingHorizontal: 16,
+                                paddingVertical: 8,
+                                borderRadius: 8,
+                            }}
+                        >
+                            <Text style={{ color: "white", fontWeight: "600" }}>
+                                Logout
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Summary Cards */}
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            marginBottom: 24,
+                            gap: 12,
+                            paddingHorizontal: 8,
+                        }}
+                    >
+                        {/* Income Card */}
+                        <View
+                            style={{
+                                flex: 1,
+                                backgroundColor: "white",
+                                borderRadius: 8,
+                                padding: 16,
+                            }}
+                        >
+                            <Text style={{ color: "#666", marginBottom: 8 }}>
+                                Income
+                            </Text>
+                            <Text
                                 style={{
-                                    borderWidth: 1,
-                                    borderColor: "#ddd",
-                                    borderRadius: 8,
-                                    padding: 12,
-                                    backgroundColor: "#f9f9f9",
-                                    justifyContent: "center",
+                                    fontSize: 15,
+                                    fontWeight: "bold",
+                                    color: "#10b981",
                                 }}
                             >
-                                <Text
+                                ₱{summary.income.toFixed(2)}
+                            </Text>
+                        </View>
+
+                        {/* Expenses Card */}
+                        <View
+                            style={{
+                                flex: 1,
+                                backgroundColor: "white",
+                                borderRadius: 8,
+                                padding: 16,
+                            }}
+                        >
+                            <Text style={{ color: "#666", marginBottom: 8 }}>
+                                Expenses
+                            </Text>
+                            <Text
+                                style={{
+                                    fontSize: 15,
+                                    fontWeight: "bold",
+                                    color: "#ef4444",
+                                }}
+                            >
+                                ₱{summary.expenses.toFixed(2)}
+                            </Text>
+                        </View>
+
+                        {/* Balance Card */}
+                        <View
+                            style={{
+                                flex: 1,
+                                backgroundColor: "white",
+                                borderRadius: 8,
+                                padding: 16,
+                            }}
+                        >
+                            <Text style={{ color: "#666", marginBottom: 8 }}>
+                                Balance
+                            </Text>
+                            <Text
+                                style={{
+                                    fontSize: 15,
+                                    fontWeight: "bold",
+                                    color: "#1a1a2e",
+                                }}
+                            >
+                                ₱{summary.balance.toFixed(2)}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* Add Transaction Section */}
+                    <View
+                        style={{
+                            backgroundColor: "white",
+                            borderRadius: 8,
+                            padding: 16,
+                            marginBottom: 24,
+                            marginHorizontal: 8,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                marginBottom: 16,
+                            }}
+                        >
+                            Add Transaction
+                        </Text>
+
+                        <TextInput
+                            placeholder="Description"
+                            value={description}
+                            onChangeText={setDescription}
+                            style={{
+                                borderWidth: 1,
+                                borderColor: "#ddd",
+                                borderRadius: 8,
+                                padding: 12,
+                                marginBottom: 12,
+                                backgroundColor: "#f9f9f9",
+                            }}
+                        />
+
+                        <TextInput
+                            placeholder="Amount"
+                            value={amount}
+                            onChangeText={setAmount}
+                            keyboardType="decimal-pad"
+                            style={{
+                                borderWidth: 1,
+                                borderColor: "#ddd",
+                                borderRadius: 8,
+                                padding: 12,
+                                marginBottom: 12,
+                                backgroundColor: "#f9f9f9",
+                            }}
+                        />
+
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                gap: 12,
+                                marginBottom: 12,
+                            }}
+                        >
+                            {/* Category Dropdown */}
+                            <View style={{ flex: 1 }}>
+                                <TouchableOpacity
+                                    onPress={() => setShowCategoryModal(true)}
                                     style={{
-                                        color: selectedCategory ? "#000" : "#999",
-                                        fontSize: 14,
+                                        borderWidth: 1,
+                                        borderColor: "#ddd",
+                                        borderRadius: 8,
+                                        padding: 12,
+                                        backgroundColor: "#f9f9f9",
+                                        justifyContent: "center",
                                     }}
                                 >
-                                    {selectedCategory
-                                        ? categories.find(
-                                            (c) => c.id === selectedCategory
-                                        )?.name || "Select Category"
-                                        : "Select Category"}
-                                </Text>
-                            </TouchableOpacity>
+                                    <Text
+                                        style={{
+                                            color: selectedCategory ? "#000" : "#999",
+                                            fontSize: 14,
+                                        }}
+                                    >
+                                        {selectedCategory
+                                            ? categories.find(
+                                                (c) => c.id === selectedCategory
+                                            )?.name || "Select Category"
+                                            : "Select Category"}
+                                    </Text>
+                                </TouchableOpacity>
 
-                            {/* Category Modal */}
-                            <Modal
-                                visible={showCategoryModal}
-                                transparent
-                                animationType="slide"
-                                onRequestClose={() =>
-                                    setShowCategoryModal(false)
-                                }
-                            >
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        backgroundColor: "rgba(0,0,0,0.5)",
-                                        justifyContent: "flex-end",
-                                    }}
+                                {/* Category Modal */}
+                                <Modal
+                                    visible={showCategoryModal}
+                                    transparent
+                                    animationType="slide"
+                                    onRequestClose={() =>
+                                        setShowCategoryModal(false)
+                                    }
                                 >
                                     <View
                                         style={{
-                                            backgroundColor: "white",
-                                            borderTopLeftRadius: 12,
-                                            borderTopRightRadius: 12,
-                                            paddingVertical: 12,
+                                            flex: 1,
+                                            backgroundColor: "rgba(0,0,0,0.5)",
+                                            justifyContent: "flex-end",
                                         }}
                                     >
                                         <View
                                             style={{
-                                                flexDirection: "row",
-                                                justifyContent:
-                                                    "space-between",
-                                                alignItems: "center",
-                                                paddingHorizontal: 16,
-                                                paddingBottom: 12,
-                                                borderBottomWidth: 1,
-                                                borderBottomColor: "#eee",
+                                                backgroundColor: "white",
+                                                borderTopLeftRadius: 12,
+                                                borderTopRightRadius: 12,
+                                                paddingVertical: 12,
                                             }}
                                         >
-                                            <Text
+                                            <View
                                                 style={{
-                                                    fontSize: 16,
-                                                    fontWeight: "bold",
+                                                    flexDirection: "row",
+                                                    justifyContent:
+                                                        "space-between",
+                                                    alignItems: "center",
+                                                    paddingHorizontal: 16,
+                                                    paddingBottom: 12,
+                                                    borderBottomWidth: 1,
+                                                    borderBottomColor: "#eee",
                                                 }}
-                                            >
-                                                Select Category
-                                            </Text>
-                                            <TouchableOpacity
-                                                onPress={() =>
-                                                    setShowCategoryModal(false)
-                                                }
                                             >
                                                 <Text
                                                     style={{
-                                                        fontSize: 18,
-                                                        color: "#3b82f6",
+                                                        fontSize: 16,
+                                                        fontWeight: "bold",
                                                     }}
                                                 >
-                                                    ✕
+                                                    Select Category
                                                 </Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                        <FlatList
-                                            data={categories}
-                                            keyExtractor={(item) => item.id}
-                                            scrollEnabled={
-                                                categories.length > 5
-                                            }
-                                            style={{
-                                                maxHeight: 300,
-                                            }}
-                                            renderItem={({ item }) => (
                                                 <TouchableOpacity
-                                                    onPress={() => {
-                                                        setSelectedCategory(
-                                                            item.id
-                                                        );
-                                                        setShowCategoryModal(
-                                                            false
-                                                        );
-                                                    }}
-                                                    style={{
-                                                        paddingHorizontal: 16,
-                                                        paddingVertical: 12,
-                                                        borderBottomWidth: 1,
-                                                        borderBottomColor:
-                                                            "#eee",
-                                                        backgroundColor:
-                                                            selectedCategory ===
-                                                                item.id
-                                                                ? "#eff6ff"
-                                                                : "white",
-                                                    }}
+                                                    onPress={() =>
+                                                        setShowCategoryModal(false)
+                                                    }
                                                 >
                                                     <Text
                                                         style={{
-                                                            fontSize: 16,
-                                                            color:
-                                                                selectedCategory ===
-                                                                    item.id
-                                                                    ? "#3b82f6"
-                                                                    : "#000",
-                                                            fontWeight:
-                                                                selectedCategory ===
-                                                                    item.id
-                                                                    ? "600"
-                                                                    : "400",
+                                                            fontSize: 18,
+                                                            color: "#3b82f6",
                                                         }}
                                                     >
-                                                        {item.name}
+                                                        ✕
                                                     </Text>
                                                 </TouchableOpacity>
-                                            )}
-                                        />
-                                    </View>
-                                </View>
-                            </Modal>
-                        </View>
-
-                        {/* Type Dropdown */}
-                        <View style={{ flex: 1 }}>
-                            <TouchableOpacity
-                                onPress={() => setShowTypeModal(true)}
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: "#ddd",
-                                    borderRadius: 8,
-                                    padding: 12,
-                                    backgroundColor: "#f9f9f9",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        color: "#000",
-                                        fontSize: 14,
-                                        textTransform: "capitalize",
-                                    }}
-                                >
-                                    {transactionType}
-                                </Text>
-                            </TouchableOpacity>
-
-                            {/* Type Modal */}
-                            <Modal
-                                visible={showTypeModal}
-                                transparent
-                                animationType="slide"
-                                onRequestClose={() =>
-                                    setShowTypeModal(false)
-                                }
-                            >
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        backgroundColor: "rgba(0,0,0,0.5)",
-                                        justifyContent: "flex-end",
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            backgroundColor: "white",
-                                            borderTopLeftRadius: 12,
-                                            borderTopRightRadius: 12,
-                                            paddingVertical: 12,
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                flexDirection: "row",
-                                                justifyContent:
-                                                    "space-between",
-                                                alignItems: "center",
-                                                paddingHorizontal: 16,
-                                                paddingBottom: 12,
-                                                borderBottomWidth: 1,
-                                                borderBottomColor: "#eee",
-                                            }}
-                                        >
-                                            <Text
-                                                style={{
-                                                    fontSize: 16,
-                                                    fontWeight: "bold",
-                                                }}
-                                            >
-                                                Select Type
-                                            </Text>
-                                            <TouchableOpacity
-                                                onPress={() =>
-                                                    setShowTypeModal(false)
+                                            </View>
+                                            <FlatList
+                                                data={categories}
+                                                keyExtractor={(item) => item.id}
+                                                scrollEnabled={
+                                                    categories.length > 5
                                                 }
-                                            >
-                                                <Text
-                                                    style={{
-                                                        fontSize: 18,
-                                                        color: "#3b82f6",
-                                                    }}
-                                                >
-                                                    ✕
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View>
-                                            {["expense", "income"].map(
-                                                (type) => (
+                                                style={{
+                                                    maxHeight: 300,
+                                                }}
+                                                renderItem={({ item }) => (
                                                     <TouchableOpacity
-                                                        key={type}
                                                         onPress={() => {
-                                                            setTransactionType(
-                                                                type as
-                                                                | "income"
-                                                                | "expense"
+                                                            setSelectedCategory(
+                                                                item.id
                                                             );
-                                                            setShowTypeModal(
+                                                            setShowCategoryModal(
                                                                 false
                                                             );
                                                         }}
                                                         style={{
-                                                            paddingHorizontal:
-                                                                16,
+                                                            paddingHorizontal: 16,
                                                             paddingVertical: 12,
                                                             borderBottomWidth: 1,
                                                             borderBottomColor:
                                                                 "#eee",
                                                             backgroundColor:
-                                                                transactionType ===
-                                                                    type
+                                                                selectedCategory ===
+                                                                    item.id
                                                                     ? "#eff6ff"
                                                                     : "white",
                                                         }}
@@ -682,58 +546,174 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                                                             style={{
                                                                 fontSize: 16,
                                                                 color:
-                                                                    transactionType ===
-                                                                        type
+                                                                    selectedCategory ===
+                                                                        item.id
                                                                         ? "#3b82f6"
                                                                         : "#000",
                                                                 fontWeight:
-                                                                    transactionType ===
-                                                                        type
+                                                                    selectedCategory ===
+                                                                        item.id
                                                                         ? "600"
                                                                         : "400",
-                                                                textTransform:
-                                                                    "capitalize",
                                                             }}
                                                         >
-                                                            {type}
+                                                            {item.name}
                                                         </Text>
                                                     </TouchableOpacity>
-                                                )
-                                            )}
+                                                )}
+                                            />
                                         </View>
                                     </View>
-                                </View>
-                            </Modal>
-                        </View>
-                    </View>
+                                </Modal>
+                            </View>
 
-                    <View style={{ flexDirection: "row", gap: 8 }}>
-                        <TouchableOpacity
-                            onPress={handleAddTransaction}
-                            style={{
-                                flex: 1,
-                                backgroundColor: "#3b82f6",
-                                borderRadius: 8,
-                                padding: 12,
-                                alignItems: "center",
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    color: "white",
-                                    fontWeight: "bold",
-                                    fontSize: 16,
-                                }}
-                            >
-                                {editingId ? "Update" : "Add"}
-                            </Text>
-                        </TouchableOpacity>
-                        {editingId && (
+                            {/* Type Dropdown */}
+                            <View style={{ flex: 1 }}>
+                                <TouchableOpacity
+                                    onPress={() => setShowTypeModal(true)}
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: "#ddd",
+                                        borderRadius: 8,
+                                        padding: 12,
+                                        backgroundColor: "#f9f9f9",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: "#000",
+                                            fontSize: 14,
+                                            textTransform: "capitalize",
+                                        }}
+                                    >
+                                        {transactionType}
+                                    </Text>
+                                </TouchableOpacity>
+
+                                {/* Type Modal */}
+                                <Modal
+                                    visible={showTypeModal}
+                                    transparent
+                                    animationType="slide"
+                                    onRequestClose={() =>
+                                        setShowTypeModal(false)
+                                    }
+                                >
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            backgroundColor: "rgba(0,0,0,0.5)",
+                                            justifyContent: "flex-end",
+                                        }}
+                                    >
+                                        <View
+                                            style={{
+                                                backgroundColor: "white",
+                                                borderTopLeftRadius: 12,
+                                                borderTopRightRadius: 12,
+                                                paddingVertical: 12,
+                                            }}
+                                        >
+                                            <View
+                                                style={{
+                                                    flexDirection: "row",
+                                                    justifyContent:
+                                                        "space-between",
+                                                    alignItems: "center",
+                                                    paddingHorizontal: 16,
+                                                    paddingBottom: 12,
+                                                    borderBottomWidth: 1,
+                                                    borderBottomColor: "#eee",
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontSize: 16,
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    Select Type
+                                                </Text>
+                                                <TouchableOpacity
+                                                    onPress={() =>
+                                                        setShowTypeModal(false)
+                                                    }
+                                                >
+                                                    <Text
+                                                        style={{
+                                                            fontSize: 18,
+                                                            color: "#3b82f6",
+                                                        }}
+                                                    >
+                                                        ✕
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View>
+                                                {["expense", "income"].map(
+                                                    (type) => (
+                                                        <TouchableOpacity
+                                                            key={type}
+                                                            onPress={() => {
+                                                                setTransactionType(
+                                                                    type as
+                                                                    | "income"
+                                                                    | "expense"
+                                                                );
+                                                                setShowTypeModal(
+                                                                    false
+                                                                );
+                                                            }}
+                                                            style={{
+                                                                paddingHorizontal:
+                                                                    16,
+                                                                paddingVertical: 12,
+                                                                borderBottomWidth: 1,
+                                                                borderBottomColor:
+                                                                    "#eee",
+                                                                backgroundColor:
+                                                                    transactionType ===
+                                                                        type
+                                                                        ? "#eff6ff"
+                                                                        : "white",
+                                                            }}
+                                                        >
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 16,
+                                                                    color:
+                                                                        transactionType ===
+                                                                            type
+                                                                            ? "#3b82f6"
+                                                                            : "#000",
+                                                                    fontWeight:
+                                                                        transactionType ===
+                                                                            type
+                                                                            ? "600"
+                                                                            : "400",
+                                                                    textTransform:
+                                                                        "capitalize",
+                                                                }}
+                                                            >
+                                                                {type}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    )
+                                                )}
+                                            </View>
+                                        </View>
+                                    </View>
+                                </Modal>
+                            </View>
+                        </View>
+
+                        <View style={{ flexDirection: "row", gap: 8 }}>
                             <TouchableOpacity
-                                onPress={handleCancelEdit}
+                                onPress={handleAddTransaction}
                                 style={{
                                     flex: 1,
-                                    backgroundColor: "#e5e7eb",
+                                    backgroundColor: "#3b82f6",
                                     borderRadius: 8,
                                     padding: 12,
                                     alignItems: "center",
@@ -741,181 +721,203 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                             >
                                 <Text
                                     style={{
-                                        color: "#1a1a2e",
+                                        color: "white",
                                         fontWeight: "bold",
                                         fontSize: 16,
                                     }}
                                 >
-                                    Cancel
+                                    {editingId ? "Update" : "Add"}
                                 </Text>
                             </TouchableOpacity>
-                        )}
-                    </View>
-                </View>
-
-                {/* Filter Buttons */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        gap: 8,
-                        marginBottom: 16,
-                        paddingHorizontal: 8,
-                    }}
-                >
-                    {(["all", "income", "expense"] as FilterType[]).map(
-                        (f) => (
-                            <TouchableOpacity
-                                key={f}
-                                onPress={() => setFilter(f)}
-                                style={{
-                                    paddingHorizontal: 16,
-                                    paddingVertical: 8,
-                                    borderRadius: 8,
-                                    backgroundColor:
-                                        filter === f
-                                            ? "#3b82f6"
-                                            : "#e5e7eb",
-                                }}
-                            >
-                                <Text
+                            {editingId && (
+                                <TouchableOpacity
+                                    onPress={handleCancelEdit}
                                     style={{
-                                        fontWeight:
-                                            filter === f ? "bold" : "500",
-                                        color:
-                                            filter === f ? "white" : "#1a1a2e",
-                                        textTransform: "capitalize",
-                                    }}
-                                >
-                                    {f}
-                                </Text>
-                            </TouchableOpacity>
-                        )
-                    )}
-                </View>
-
-                {/* Transactions List */}
-                <FlatList
-                    scrollEnabled={false}
-                    data={filteredTransactions}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ paddingHorizontal: 8 }}
-                    renderItem={({ item }) => (
-                        <View
-                            style={{
-                                backgroundColor: "white",
-                                borderRadius: 8,
-                                padding: 16,
-                                marginBottom: 12,
-                                borderWidth: 1,
-                                borderColor: "#e5e7eb",
-                            }}
-                        >
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                    alignItems: "flex-start",
-                                    marginBottom: 8,
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        fontWeight: "bold",
-                                        fontSize: 16,
                                         flex: 1,
-                                    }}
-                                >
-                                    {item.category_name}
-                                </Text>
-                                <Text
-                                    style={{
-                                        fontWeight: "600",
-                                        fontSize: 16,
-                                        color:
-                                            item.type === "income"
-                                                ? "#10b981"
-                                                : "#ef4444",
-                                    }}
-                                >
-                                    {item.type === "income" ? "+" : "-"}₱
-                                    {item.amount}
-                                </Text>
-                            </View>
-                            <Text
-                                style={{
-                                    color: "#666",
-                                    marginBottom: 12,
-                                    textTransform: "lowercase",
-                                }}
-                            >
-                                {item.type} - {item.description}
-                            </Text>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    gap: 8,
-                                    justifyContent: "flex-end",
-                                }}
-                            >
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        handleDeleteTransaction(item.id)
-                                    }
-                                    style={{
-                                        paddingHorizontal: 12,
-                                        paddingVertical: 6,
-                                        borderRadius: 6,
-                                        backgroundColor: "#fee2e2",
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            color: "#dc2626",
-                                            fontWeight: "600",
-                                        }}
-                                    >
-                                        Delete
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        handleEditTransaction(item)
-                                    }
-                                    style={{
-                                        paddingHorizontal: 12,
-                                        paddingVertical: 6,
-                                        borderRadius: 6,
                                         backgroundColor: "#e5e7eb",
+                                        borderRadius: 8,
+                                        padding: 12,
+                                        alignItems: "center",
                                     }}
                                 >
                                     <Text
                                         style={{
                                             color: "#1a1a2e",
-                                            fontWeight: "600",
+                                            fontWeight: "bold",
+                                            fontSize: 16,
                                         }}
                                     >
-                                        Edit
+                                        Cancel
                                     </Text>
                                 </TouchableOpacity>
+                            )}
+                        </View>
+                    </View>
+
+                    {/* Filter Buttons */}
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            gap: 8,
+                            marginBottom: 16,
+                            paddingHorizontal: 8,
+                        }}
+                    >
+                        {(["all", "income", "expense"] as FilterType[]).map(
+                            (f) => (
+                                <TouchableOpacity
+                                    key={f}
+                                    onPress={() => setFilter(f)}
+                                    style={{
+                                        paddingHorizontal: 16,
+                                        paddingVertical: 8,
+                                        borderRadius: 8,
+                                        backgroundColor:
+                                            filter === f
+                                                ? "#3b82f6"
+                                                : "#e5e7eb",
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            fontWeight:
+                                                filter === f ? "bold" : "500",
+                                            color:
+                                                filter === f ? "white" : "#1a1a2e",
+                                            textTransform: "capitalize",
+                                        }}
+                                    >
+                                        {f}
+                                    </Text>
+                                </TouchableOpacity>
+                            )
+                        )}
+                    </View>
+
+                    {/* Transactions List */}
+                    <FlatList
+                        scrollEnabled={false}
+                        data={filteredTransactions}
+                        keyExtractor={(item) => item.id}
+                        contentContainerStyle={{ paddingHorizontal: 8 }}
+                        renderItem={({ item }) => (
+                            <View
+                                style={{
+                                    backgroundColor: "white",
+                                    borderRadius: 8,
+                                    padding: 16,
+                                    marginBottom: 12,
+                                    borderWidth: 1,
+                                    borderColor: "#e5e7eb",
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        alignItems: "flex-start",
+                                        marginBottom: 8,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            fontWeight: "bold",
+                                            fontSize: 16,
+                                            flex: 1,
+                                        }}
+                                    >
+                                        {item.category_name}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            fontWeight: "600",
+                                            fontSize: 16,
+                                            color:
+                                                item.type === "income"
+                                                    ? "#10b981"
+                                                    : "#ef4444",
+                                        }}
+                                    >
+                                        {item.type === "income" ? "+" : "-"}₱
+                                        {item.amount}
+                                    </Text>
+                                </View>
+                                <Text
+                                    style={{
+                                        color: "#666",
+                                        marginBottom: 12,
+                                        textTransform: "lowercase",
+                                    }}
+                                >
+                                    {item.type} - {item.description}
+                                </Text>
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        gap: 8,
+                                        justifyContent: "flex-end",
+                                    }}
+                                >
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            handleDeleteTransaction(item.id)
+                                        }
+                                        style={{
+                                            paddingHorizontal: 12,
+                                            paddingVertical: 6,
+                                            borderRadius: 6,
+                                            backgroundColor: "#fee2e2",
+                                        }}
+                                    >
+                                        <Text
+                                            style={{
+                                                color: "#dc2626",
+                                                fontWeight: "600",
+                                            }}
+                                        >
+                                            Delete
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            handleEditTransaction(item)
+                                        }
+                                        style={{
+                                            paddingHorizontal: 12,
+                                            paddingVertical: 6,
+                                            borderRadius: 6,
+                                            backgroundColor: "#e5e7eb",
+                                        }}
+                                    >
+                                        <Text
+                                            style={{
+                                                color: "#1a1a2e",
+                                                fontWeight: "600",
+                                            }}
+                                        >
+                                            Edit
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
-                    )}
-                    ListEmptyComponent={
-                        <View
-                            style={{
-                                backgroundColor: "white",
-                                borderRadius: 8,
-                                padding: 32,
-                                alignItems: "center",
-                            }}
-                        >
-                            <Text style={{ color: "#999", fontSize: 16 }}>
-                                No transactions yet
-                            </Text>
-                        </View>
-                    }
-                />
-            </ScrollView>
-        </SafeAreaView>
+                        )}
+                        ListEmptyComponent={
+                            <View
+                                style={{
+                                    backgroundColor: "white",
+                                    borderRadius: 8,
+                                    padding: 32,
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Text style={{ color: "#999", fontSize: 16 }}>
+                                    No transactions yet
+                                </Text>
+                            </View>
+                        }
+                    />
+                </ScrollView>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
