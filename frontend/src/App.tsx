@@ -245,7 +245,7 @@ function App() {
     <main className="min-h-screen bg-gray-100 p-6">
       <div className="mx-auto max-w-4xl">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Finance App</h1>
+          <h1 className="text-3xl font-bold text-gray-900">PesoTrack</h1>
           <button
             className="rounded-lg bg-gray-900 px-4 py-2 text-white hover:bg-gray-700"
             onClick={handleLogout}

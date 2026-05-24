@@ -67,7 +67,7 @@ export default function LoginScreen({
                     fontWeight: "bold",
                 }}
             >
-                Finance App
+                PesoTrack
             </Text>
 
             <TextInput

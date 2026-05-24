@@ -307,7 +307,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         }}
                     >
                         <Text style={{ fontSize: 28, fontWeight: "bold" }}>
-                            Finance App
+                            PesoTrack
                         </Text>
                         <TouchableOpacity
                             onPress={onLogout}
