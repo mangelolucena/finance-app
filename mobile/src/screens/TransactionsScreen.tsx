@@ -23,6 +23,7 @@ type Transaction = {
     type: "income" | "expense";
     category_id: string;
     category_name: string | null;
+    transaction_date: string;
 };
 
 type Category = {
@@ -31,6 +32,38 @@ type Category = {
 };
 
 type FilterType = "all" | "income" | "expense";
+const incomeCategoryNames = [
+    "Salary",
+    "Freelance",
+    "Business",
+    "Investment",
+    "Allowance",
+    "Bonus",
+    "Gift",
+    "Refund",
+    "Other Income",
+];
+
+const expenseCategoryNames = [
+    "Food",
+    "Transportation",
+    "Bills",
+    "Rent",
+    "Groceries",
+    "Shopping",
+    "Health",
+    "Entertainment",
+    "Education",
+    "Travel",
+    "Insurance",
+    "Debt Payment",
+    "Savings",
+    "Donation",
+    "Family Support",
+    "Personal Care",
+    "Subscriptions",
+    "Other Expense",
+];
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -243,6 +276,14 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
         if (filter === "all") return transactions;
         return transactions.filter((t) => t.type === filter);
     };
+
+    const filteredCategories = categories.filter((category) => {
+        if (transactionType === "income") {
+            return incomeCategoryNames.includes(category.name);
+        }
+
+        return expenseCategoryNames.includes(category.name);
+    });
 
     const summary = calculateSummary();
     const filteredTransactions = getFilteredTransactions();
@@ -507,10 +548,10 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                                                 </TouchableOpacity>
                                             </View>
                                             <FlatList
-                                                data={categories}
+                                                data={filteredCategories}
                                                 keyExtractor={(item) => item.id}
                                                 scrollEnabled={
-                                                    categories.length > 5
+                                                    filteredCategories.length > 5
                                                 }
                                                 style={{
                                                     maxHeight: 300,
@@ -837,6 +878,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                                         {item.type === "income" ? "+" : "-"}₱
                                         {item.amount}
                                     </Text>
+
                                 </View>
                                 <Text
                                     style={{
@@ -846,6 +888,14 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                                     }}
                                 >
                                     {item.type} - {item.description}
+                                </Text>
+                                <Text
+                                    style={{
+                                        color: "#999",
+                                        fontSize: 12,
+                                    }}
+                                >
+                                    {new Date(item.transaction_date).toLocaleDateString()}
                                 </Text>
                                 <View
                                     style={{
