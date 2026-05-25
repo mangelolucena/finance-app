@@ -3,8 +3,11 @@ import {
     View,
     Text,
     TextInput,
-    Button,
+    Pressable,
     ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -20,10 +23,7 @@ type FormErrors = {
     password?: string;
 };
 
-export default function LoginScreen({
-    onLogin,
-    onGoToRegister,
-}: Props) {
+export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<FormErrors>({});
@@ -31,7 +31,6 @@ export default function LoginScreen({
 
     const validateForm = () => {
         const newErrors: FormErrors = {};
-
         const trimmedEmail = email.trim();
 
         if (!trimmedEmail) {
@@ -47,7 +46,6 @@ export default function LoginScreen({
         }
 
         setErrors(newErrors);
-
         return Object.keys(newErrors).length === 0;
     };
 
@@ -88,80 +86,213 @@ export default function LoginScreen({
         <SafeAreaView
             style={{
                 flex: 1,
-                justifyContent: "center",
-                padding: 24,
-                gap: 12,
+                backgroundColor: "#ECFDF5",
             }}
         >
-            <Text
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
                 style={{
-                    fontSize: 32,
-                    fontWeight: "bold",
+                    flex: 1,
+                    justifyContent: "center",
+                    padding: 24,
                 }}
             >
-                PesoTrack
-            </Text>
-
-            <View>
-                <TextInput
-                    placeholder="Email"
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                    value={email}
-                    onChangeText={(value) => {
-                        setEmail(value);
-                        setErrors((prev) => ({ ...prev, email: undefined }));
-                    }}
+                <View
                     style={{
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        padding: 12,
-                        borderColor: errors.email ? "red" : "#ccc",
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: 28,
+                        padding: 28,
+                        shadowColor: "#000",
+                        shadowOpacity: 0.08,
+                        shadowRadius: 16,
+                        shadowOffset: {
+                            width: 0,
+                            height: 8,
+                        },
+                        elevation: 4,
                     }}
-                />
+                >
+                    <View
+                        style={{
+                            alignItems: "center",
+                            marginBottom: 24,
+                        }}
+                    >
+                        <Image
+                            source={require("../../assets/icon.png")}
+                            style={{
+                                width: 90,
+                                height: 90,
+                                marginBottom: 14,
+                            }}
+                            resizeMode="contain"
+                        />
 
-                {errors.email && (
-                    <Text style={{ color: "red", marginTop: 4 }}>
-                        {errors.email}
-                    </Text>
-                )}
-            </View>
+                        <Text
+                            style={{
+                                fontSize: 34,
+                                fontWeight: "800",
+                                color: "#064E3B",
+                            }}
+                        >
+                            PesoTrack
+                        </Text>
 
-            <View>
-                <TextInput
-                    placeholder="Password"
-                    secureTextEntry
-                    value={password}
-                    onChangeText={(value) => {
-                        setPassword(value);
-                        setErrors((prev) => ({ ...prev, password: undefined }));
-                    }}
-                    style={{
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        padding: 12,
-                        borderColor: errors.password ? "red" : "#ccc",
-                    }}
-                />
+                        <Text
+                            style={{
+                                marginTop: 6,
+                                color: "#6B7280",
+                                fontSize: 15,
+                                textAlign: "center",
+                            }}
+                        >
+                            Manage your money smarter and track your finances easily.
+                        </Text>
+                    </View>
 
-                {errors.password && (
-                    <Text style={{ color: "red", marginTop: 4 }}>
-                        {errors.password}
-                    </Text>
-                )}
-            </View>
+                    <View style={{ marginBottom: 16 }}>
+                        <Text
+                            style={{
+                                marginBottom: 6,
+                                color: "#065F46",
+                                fontWeight: "600",
+                            }}
+                        >
+                            Email
+                        </Text>
 
-            {loading ? (
-                <ActivityIndicator />
-            ) : (
-                <Button title="Login" onPress={handleLogin} />
-            )}
+                        <TextInput
+                            placeholder="you@example.com"
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            value={email}
+                            onChangeText={(value) => {
+                                setEmail(value);
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    email: undefined,
+                                }));
+                            }}
+                            style={{
+                                borderWidth: 1,
+                                borderRadius: 16,
+                                padding: 15,
+                                borderColor: errors.email
+                                    ? "#DC2626"
+                                    : "#D1FAE5",
+                                backgroundColor: "#F9FAFB",
+                                fontSize: 16,
+                            }}
+                        />
 
-            <Button
-                title="Create Account"
-                onPress={onGoToRegister}
-                disabled={loading}
-            />
+                        {errors.email && (
+                            <Text
+                                style={{
+                                    color: "#DC2626",
+                                    marginTop: 6,
+                                    fontSize: 13,
+                                }}
+                            >
+                                {errors.email}
+                            </Text>
+                        )}
+                    </View>
+
+                    <View style={{ marginBottom: 22 }}>
+                        <Text
+                            style={{
+                                marginBottom: 6,
+                                color: "#065F46",
+                                fontWeight: "600",
+                            }}
+                        >
+                            Password
+                        </Text>
+
+                        <TextInput
+                            placeholder="Enter your password"
+                            secureTextEntry
+                            value={password}
+                            onChangeText={(value) => {
+                                setPassword(value);
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    password: undefined,
+                                }));
+                            }}
+                            style={{
+                                borderWidth: 1,
+                                borderRadius: 16,
+                                padding: 15,
+                                borderColor: errors.password
+                                    ? "#DC2626"
+                                    : "#D1FAE5",
+                                backgroundColor: "#F9FAFB",
+                                fontSize: 16,
+                            }}
+                        />
+
+                        {errors.password && (
+                            <Text
+                                style={{
+                                    color: "#DC2626",
+                                    marginTop: 6,
+                                    fontSize: 13,
+                                }}
+                            >
+                                {errors.password}
+                            </Text>
+                        )}
+                    </View>
+
+                    <Pressable
+                        onPress={handleLogin}
+                        disabled={loading}
+                        style={{
+                            height: 56,
+                            borderRadius: 18,
+                            backgroundColor: loading
+                                ? "#6EE7B7"
+                                : "#059669",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginBottom: 16,
+                        }}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="#FFFFFF" />
+                        ) : (
+                            <Text
+                                style={{
+                                    color: "#FFFFFF",
+                                    fontWeight: "700",
+                                    fontSize: 17,
+                                }}
+                            >
+                                Login
+                            </Text>
+                        )}
+                    </Pressable>
+
+                    <Pressable
+                        onPress={onGoToRegister}
+                        disabled={loading}
+                        style={{
+                            alignItems: "center",
+                            paddingVertical: 10,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: "#059669",
+                                fontWeight: "700",
+                            }}
+                        >
+                            Create an account
+                        </Text>
+                    </Pressable>
+                </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
