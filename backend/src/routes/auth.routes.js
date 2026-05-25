@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../db/pool");
+const authMiddleware = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
@@ -74,7 +75,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.delete("/delete", authenticateToken, async (req, res) => {
+router.delete("/delete", authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
 
