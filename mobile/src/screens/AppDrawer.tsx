@@ -12,9 +12,10 @@ const Drawer = createDrawerNavigator();
 type Props = {
     token: string;
     onLogout: () => void;
+    onDeleteAccount: () => void;
 };
 
-export default function AppDrawer({ token, onLogout }: Props) {
+export default function AppDrawer({ token, onLogout, onDeleteAccount }: Props) {
     return (
         <Drawer.Navigator
             drawerContent={(props) => (
@@ -25,6 +26,10 @@ export default function AppDrawer({ token, onLogout }: Props) {
                         label="Logout"
                         onPress={onLogout}
                     />
+                    <DrawerItem
+                        label="Delete Account"
+                        onPress={onDeleteAccount}
+                    />
                 </DrawerContentScrollView>
             )}
         >
@@ -33,7 +38,6 @@ export default function AppDrawer({ token, onLogout }: Props) {
                     <TransactionsScreen
                         {...props}
                         token={token}
-                        onLogout={onLogout}
                     />
                 )}
             </Drawer.Screen>

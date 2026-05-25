@@ -74,4 +74,22 @@ router.post("/login", async (req, res) => {
     }
 });
 
+router.post("/delete", async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        await pool.query(
+            `DELETE FROM users WHERE id = $1`,
+            [userId]
+        );
+
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to delete account",
+            error: error.message,
+        });
+    }
+});
+
 module.exports = router;

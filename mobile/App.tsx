@@ -6,6 +6,7 @@ import RegisterScreen from "./src/screens/RegisterScreen";
 import TransactionsScreen from "./src/screens/TransactionsScreen";
 import AppDrawer from "./src/screens/AppDrawer";
 import { NavigationContainer } from "@react-navigation/native";
+import { Alert } from "react-native";
 
 const TOKEN_KEY = "finance_app_token";
 
@@ -33,6 +34,43 @@ export default function App() {
     setToken(newToken);
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete account");
+      }
+
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      setToken("");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      Alert.alert("Error", message);
+    }
+  }
+
+  const showDeleteAccountAlert = async () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure?",
+      [
+        { text: "Cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: handleDeleteAccount,
+        },
+      ]
+    );
+  }
+
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     setToken("");
@@ -55,7 +93,9 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <AppDrawer token={token} onLogout={handleLogout} />
+      <AppDrawer token={token}
+        onLogout={handleLogout}
+        onDeleteAccount={handleDeleteAccount} />
     </NavigationContainer>
   );
 }

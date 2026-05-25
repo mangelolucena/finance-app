@@ -28,7 +28,6 @@ const COLORS = {
 
 type Props = {
     token: string;
-    onLogout: () => void;
 };
 
 type Transaction = {
@@ -82,7 +81,7 @@ const expenseCategoryNames = [
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-export default function TransactionsScreen({ token, onLogout }: Props) {
+export default function TransactionsScreen({ token }: Props) {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [description, setDescription] = useState("");
