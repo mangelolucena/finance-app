@@ -4,6 +4,8 @@ import * as SecureStore from "expo-secure-store";
 import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import TransactionsScreen from "./src/screens/TransactionsScreen";
+import AppDrawer from "./src/screens/AppDrawer";
+import { NavigationContainer } from "@react-navigation/native";
 
 const TOKEN_KEY = "finance_app_token";
 
@@ -51,5 +53,9 @@ export default function App() {
     );
   }
 
-  return <TransactionsScreen token={token} onLogout={handleLogout} />;
+  return (
+    <NavigationContainer>
+      <AppDrawer token={token} onLogout={handleLogout} />
+    </NavigationContainer>
+  );
 }

@@ -327,20 +327,6 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         <Text style={{ fontSize: 30, fontWeight: "800", color: COLORS.primaryDark }}>
                             PesoTrack
                         </Text>
-
-                        <TouchableOpacity
-                            onPress={onLogout}
-                            style={{
-                                backgroundColor: COLORS.primaryDark,
-                                paddingHorizontal: 16,
-                                paddingVertical: 10,
-                                borderRadius: 14,
-                            }}
-                        >
-                            <Text style={{ color: "white", fontWeight: "700" }}>
-                                Logout
-                            </Text>
-                        </TouchableOpacity>
                     </View>
 
                     {/* Summary Cards */}
