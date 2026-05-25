@@ -11,6 +11,21 @@ import {
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
+const COLORS = {
+    background: "#ECFDF5",
+    card: "#FFFFFF",
+    primary: "#059669",
+    primaryDark: "#064E3B",
+    primaryLight: "#D1FAE5",
+    income: "#10B981",
+    expense: "#EF4444",
+    text: "#111827",
+    muted: "#6B7280",
+    border: "#D1FAE5",
+    dangerBg: "#FEE2E2",
+    dangerText: "#DC2626",
+};
+
 type Props = {
     token: string;
     onLogout: () => void;
@@ -290,7 +305,10 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
 
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }} edges={["top", "bottom"]}>
+            <SafeAreaView
+                style={{ flex: 1, backgroundColor: COLORS.background }}
+                edges={["top", "bottom"]}>
+
                 <ScrollView
                     style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}
                     showsVerticalScrollIndicator={false}
@@ -306,19 +324,20 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                             paddingHorizontal: 8,
                         }}
                     >
-                        <Text style={{ fontSize: 28, fontWeight: "bold" }}>
+                        <Text style={{ fontSize: 30, fontWeight: "800", color: COLORS.primaryDark }}>
                             PesoTrack
                         </Text>
+
                         <TouchableOpacity
                             onPress={onLogout}
                             style={{
-                                backgroundColor: "#1a1a2e",
+                                backgroundColor: COLORS.primaryDark,
                                 paddingHorizontal: 16,
-                                paddingVertical: 8,
-                                borderRadius: 8,
+                                paddingVertical: 10,
+                                borderRadius: 14,
                             }}
                         >
-                            <Text style={{ color: "white", fontWeight: "600" }}>
+                            <Text style={{ color: "white", fontWeight: "700" }}>
                                 Logout
                             </Text>
                         </TouchableOpacity>
@@ -336,10 +355,14 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                     >
                         <View
                             style={{
-                                flex: 1,
-                                backgroundColor: "white",
-                                borderRadius: 8,
-                                padding: 16,
+                                backgroundColor: COLORS.card,
+                                borderRadius: 20,
+                                padding: 18,
+                                shadowColor: "#000",
+                                shadowOpacity: 0.06,
+                                shadowRadius: 12,
+                                shadowOffset: { width: 0, height: 6 },
+                                elevation: 3,
                             }}
                         >
                             <Text style={{ color: "#666", marginBottom: 8 }}>
@@ -358,10 +381,14 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         {/* Income Card */}
                         <View
                             style={{
-                                flex: 1,
-                                backgroundColor: "white",
-                                borderRadius: 8,
-                                padding: 16,
+                                backgroundColor: COLORS.card,
+                                borderRadius: 20,
+                                padding: 18,
+                                shadowColor: "#000",
+                                shadowOpacity: 0.06,
+                                shadowRadius: 12,
+                                shadowOffset: { width: 0, height: 6 },
+                                elevation: 3,
                             }}
                         >
                             <Text style={{ color: "#666", marginBottom: 8 }}>
@@ -381,10 +408,14 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         {/* Expenses Card */}
                         <View
                             style={{
-                                flex: 1,
-                                backgroundColor: "white",
-                                borderRadius: 8,
-                                padding: 16,
+                                backgroundColor: COLORS.card,
+                                borderRadius: 20,
+                                padding: 18,
+                                shadowColor: "#000",
+                                shadowOpacity: 0.06,
+                                shadowRadius: 12,
+                                shadowOffset: { width: 0, height: 6 },
+                                elevation: 3,
                             }}
                         >
                             <Text style={{ color: "#666", marginBottom: 8 }}>
@@ -408,11 +439,14 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                     {/* Add Transaction Section */}
                     <View
                         style={{
-                            backgroundColor: "white",
-                            borderRadius: 8,
-                            padding: 16,
-                            marginBottom: 24,
-                            marginHorizontal: 8,
+                            backgroundColor: COLORS.card,
+                            borderRadius: 20,
+                            padding: 18,
+                            shadowColor: "#000",
+                            shadowOpacity: 0.06,
+                            shadowRadius: 12,
+                            shadowOffset: { width: 0, height: 6 },
+                            elevation: 3,
                         }}
                     >
                         <Text
@@ -701,6 +735,9 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                                                                 setShowTypeModal(
                                                                     false
                                                                 );
+                                                                if (type !== transactionType) {
+                                                                    setSelectedCategory("");
+                                                                }
                                                             }}
                                                             style={{
                                                                 paddingHorizontal:
@@ -750,9 +787,9 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                                 onPress={handleAddTransaction}
                                 style={{
                                     flex: 1,
-                                    backgroundColor: "#3b82f6",
-                                    borderRadius: 8,
-                                    padding: 12,
+                                    backgroundColor: COLORS.primary,
+                                    borderRadius: 16,
+                                    padding: 14,
                                     alignItems: "center",
                                 }}
                             >
@@ -794,6 +831,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                     {/* Filter Buttons */}
                     <View
                         style={{
+                            marginTop: 20,
                             flexDirection: "row",
                             gap: 8,
                             marginBottom: 16,
@@ -833,6 +871,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
 
                     {/* Transactions List */}
                     <FlatList
+
                         scrollEnabled={false}
                         data={filteredTransactions}
                         keyExtractor={(item) => item.id}
@@ -840,12 +879,15 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                         renderItem={({ item }) => (
                             <View
                                 style={{
-                                    backgroundColor: "white",
-                                    borderRadius: 8,
-                                    padding: 16,
-                                    marginBottom: 12,
-                                    borderWidth: 1,
-                                    borderColor: "#e5e7eb",
+                                    marginVertical: 6,
+                                    backgroundColor: COLORS.card,
+                                    borderRadius: 20,
+                                    padding: 18,
+                                    shadowColor: "#000",
+                                    shadowOpacity: 0.06,
+                                    shadowRadius: 12,
+                                    shadowOffset: { width: 0, height: 6 },
+                                    elevation: 3,
                                 }}
                             >
                                 <View
@@ -869,10 +911,7 @@ export default function TransactionsScreen({ token, onLogout }: Props) {
                                         style={{
                                             fontWeight: "600",
                                             fontSize: 16,
-                                            color:
-                                                item.type === "income"
-                                                    ? "#10b981"
-                                                    : "#ef4444",
+                                            color: item.type === "income" ? COLORS.income : COLORS.expense
                                         }}
                                     >
                                         {item.type === "income" ? "+" : "-"}₱
