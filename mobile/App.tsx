@@ -50,6 +50,9 @@ export default function App() {
 
       await SecureStore.deleteItemAsync(TOKEN_KEY);
       setToken("");
+      setAuthMode("login");
+      Alert.alert("Account deleted", "Your account has been deleted.");
+
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       Alert.alert("Error", message);

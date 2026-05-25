@@ -77,10 +77,10 @@ router.post("/login", async (req, res) => {
 
 router.delete("/delete", authMiddleware, async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.userId;
 
-        await pool.query(
-            `DELETE FROM users WHERE id = $1`,
+        const result = await pool.query(
+            `DELETE FROM users WHERE id = $1 RETURNING id`,
             [userId]
         );
 
