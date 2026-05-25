@@ -95,7 +95,7 @@ export default function App() {
     <NavigationContainer>
       <AppDrawer token={token}
         onLogout={handleLogout}
-        onDeleteAccount={handleDeleteAccount} />
+        onDeleteAccount={showDeleteAccountAlert} />
     </NavigationContainer>
   );
 }
