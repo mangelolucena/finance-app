@@ -584,44 +584,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: COLORS.primaryDark,
   },
-  summaryContainer: {
-    justifyContent: "space-between",
-    marginBottom: 24,
-    gap: 12,
-    paddingHorizontal: 8,
-  },
-  card: {
-    backgroundColor: COLORS.card,
-    borderRadius: 20,
-    padding: 18,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    elevation: 3,
-  },
-  cardLabel: {
-    color: COLORS.muted,
-    marginBottom: 8,
-  },
-  balanceAmount: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: COLORS.text,
-  },
-  incomeAmount: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: COLORS.income,
-  },
-  expenseAmount: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: COLORS.expense,
-  },
   filterContainer: {
     marginTop: 20,
     flexDirection: "row",

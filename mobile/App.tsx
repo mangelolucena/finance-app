@@ -3,7 +3,6 @@ import * as SecureStore from "expo-secure-store";
 
 import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
-import HomeDashboardScreen from "./src/screens/Home/HomeDashboardScreen";
 import AppDrawer from "./src/screens/AppDrawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { Alert } from "react-native";
