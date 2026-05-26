@@ -10,42 +10,14 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
-
-const COLORS = {
-  background: "#ECFDF5",
-  card: "#FFFFFF",
-  primary: "#059669",
-  primaryDark: "#064E3B",
-  primaryLight: "#D1FAE5",
-  income: "#10B981",
-  expense: "#EF4444",
-  text: "#111827",
-  muted: "#6B7280",
-  border: "#D1FAE5",
-  dangerBg: "#FEE2E2",
-  dangerText: "#DC2626",
-};
+import Transaction from "../types/transaction";
+import Category from "../types/category";
+import FilterType from "../types/filterType";
+import COLORS from "../constants/colors";
 
 type Props = {
   token: string;
 };
-
-type Transaction = {
-  id: string;
-  description: string;
-  amount: string;
-  type: "income" | "expense";
-  category_id: string;
-  category_name: string | null;
-  transaction_date: string;
-};
-
-type Category = {
-  id: string;
-  name: string;
-};
-
-type FilterType = "all" | "income" | "expense";
 
 const incomeCategoryNames = [
   "Salary",
