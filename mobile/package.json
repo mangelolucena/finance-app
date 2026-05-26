@@ -7,7 +7,7 @@
     "@react-native-picker/picker": "^2.11.4",
     "@react-navigation/drawer": "^7.10.2",
     "@react-navigation/native": "^7.2.4",
-    "expo": "~56.0.4",
+    "expo": "^46.0.21",
     "expo-asset": "~56.0.14",
     "expo-constants": "~56.0.15",
     "expo-dev-client": "~56.0.15",
@@ -24,7 +24,14 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "@typescript-eslint/eslint-plugin": "^8.60.0",
+    "@typescript-eslint/parser": "^8.60.0",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-native": "^5.0.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.60.0"
   },
   "scripts": {
     "start": "expo start",
