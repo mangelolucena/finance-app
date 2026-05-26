@@ -622,7 +622,7 @@ export default function TransactionsScreen({ token }: Props) {
       <Modal
         visible={showTransactionModal}
         transparent
-        animationType="slide"
+        animationType='fade'
         presentationStyle='fullScreen'
         onRequestClose={closeTransactionModal}
       >
@@ -727,7 +727,7 @@ export default function TransactionsScreen({ token }: Props) {
                   <Modal
                     visible={showCategoryModal}
                     transparent
-                    animationType="slide"
+                    animationType="none"
                     onRequestClose={() =>
                       setShowCategoryModal(false)
                     }
@@ -867,7 +867,7 @@ export default function TransactionsScreen({ token }: Props) {
                   <Modal
                     visible={showTypeModal}
                     transparent
-                    animationType="slide"
+                    animationType="none"
                     onRequestClose={() =>
                       setShowTypeModal(false)
                     }
