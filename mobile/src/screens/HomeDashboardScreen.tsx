@@ -55,7 +55,7 @@ const expenseCategoryNames = [
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-export default function TransactionsScreen({ token }: Props) {
+export default function HomeDashboardScreen({ token }: Props) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [description, setDescription] = useState("");

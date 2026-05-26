@@ -7,7 +7,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 
-import TransactionsScreen from "./TransactionsScreen";
+import HomeDashboardScreen from "./HomeDashboardScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -55,12 +55,12 @@ export default function AppDrawer({
       )}
     >
       <Drawer.Screen
-        name="Transactions"
+        name="Home"
         options={{
           headerTitle: '',
           drawerIcon: ({ color, size }) => (
             <Ionicons
-              name="wallet-outline"
+              name='home-outline'
               size={size}
               color={color}
             />
@@ -68,7 +68,7 @@ export default function AppDrawer({
         }}
       >
         {(props) => (
-          <TransactionsScreen
+          <HomeDashboardScreen
             {...props}
             token={token}
           />
