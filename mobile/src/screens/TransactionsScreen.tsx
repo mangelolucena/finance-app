@@ -9,7 +9,6 @@ import {
   ScrollView,
   Modal,
 } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const COLORS = {
   background: "#ECFDF5",
@@ -95,6 +94,32 @@ export default function TransactionsScreen({ token }: Props) {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
+  const [showTransactionModal, setShowTransactionModal] = useState(false);
+
+  const openAddModal = () => {
+    setEditingId(null);
+    setEditingTransaction(null);
+    setDescription("");
+    setAmount("");
+    setSelectedCategory("");
+    setTransactionType("expense");
+    setShowTransactionModal(true);
+  };
+
+  const openEditModal = (transaction: Transaction) => {
+    setEditingId(transaction.id);
+    setEditingTransaction(transaction);
+    setDescription(transaction.description);
+    setAmount(transaction.amount);
+    setSelectedCategory(transaction.category_id);
+    setTransactionType(transaction.type);
+    setShowTransactionModal(true);
+  };
+
+  const closeTransactionModal = () => {
+    handleCancelEdit();
+    setShowTransactionModal(false);
+  };
 
   const fetchTransactions = async () => {
     try {
@@ -303,125 +328,39 @@ export default function TransactionsScreen({ token }: Props) {
   const filteredTransactions = getFilteredTransactions();
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: COLORS.background }}
-        edges={["top", "bottom"]}>
+    <View
+      style={{ flex: 1, backgroundColor: COLORS.background }}>
 
-        <ScrollView
-          style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+      <ScrollView
+        style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
+        {/* Header */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 24,
+            paddingHorizontal: 8,
+          }}
         >
-          {/* Header */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 24,
-              paddingHorizontal: 8,
-            }}
-          >
-            <Text style={{ fontSize: 30, fontWeight: "800", color: COLORS.primaryDark }}>
-              PesoTrack
-            </Text>
-          </View>
+          <Text style={{ fontSize: 30, fontWeight: "800", color: COLORS.primaryDark }}>
+            PesoTrack
+          </Text>
+        </View>
 
-          {/* Summary Cards */}
+        {/* Summary Cards */}
 
-          <View
-            style={{
-              justifyContent: "space-between",
-              marginBottom: 24,
-              gap: 12,
-              paddingHorizontal: 8,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: COLORS.card,
-                borderRadius: 20,
-                padding: 18,
-                shadowColor: "#000",
-                shadowOpacity: 0.06,
-                shadowRadius: 12,
-                shadowOffset: { width: 0, height: 6 },
-                elevation: 3,
-              }}
-            >
-              <Text style={{ color: "#666", marginBottom: 8 }}>
-                Balance
-              </Text>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: "bold",
-                  color: "#1a1a2e",
-                }}
-              >
-                ₱{summary.balance.toFixed(2)}
-              </Text>
-            </View>
-            {/* Income Card */}
-            <View
-              style={{
-                backgroundColor: COLORS.card,
-                borderRadius: 20,
-                padding: 18,
-                shadowColor: "#000",
-                shadowOpacity: 0.06,
-                shadowRadius: 12,
-                shadowOffset: { width: 0, height: 6 },
-                elevation: 3,
-              }}
-            >
-              <Text style={{ color: "#666", marginBottom: 8 }}>
-                Income
-              </Text>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: "bold",
-                  color: "#10b981",
-                }}
-              >
-                ₱{summary.income.toFixed(2)}
-              </Text>
-            </View>
-
-            {/* Expenses Card */}
-            <View
-              style={{
-                backgroundColor: COLORS.card,
-                borderRadius: 20,
-                padding: 18,
-                shadowColor: "#000",
-                shadowOpacity: 0.06,
-                shadowRadius: 12,
-                shadowOffset: { width: 0, height: 6 },
-                elevation: 3,
-              }}
-            >
-              <Text style={{ color: "#666", marginBottom: 8 }}>
-                Expenses
-              </Text>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: "bold",
-                  color: "#ef4444",
-                }}
-              >
-                ₱{summary.expenses.toFixed(2)}
-              </Text>
-            </View>
-
-            {/* Balance Card */}
-
-          </View>
-
-          {/* Add Transaction Section */}
+        <View
+          style={{
+            justifyContent: "space-between",
+            marginBottom: 24,
+            gap: 12,
+            paddingHorizontal: 8,
+          }}
+        >
           <View
             style={{
               backgroundColor: COLORS.card,
@@ -434,306 +373,443 @@ export default function TransactionsScreen({ token }: Props) {
               elevation: 3,
             }}
           >
+            <Text style={{ color: "#666", marginBottom: 8 }}>
+              Balance
+            </Text>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 24,
                 fontWeight: "bold",
-                marginBottom: 16,
+                color: "#1a1a2e",
               }}
             >
-              Add Transaction
+              ₱{summary.balance.toFixed(2)}
             </Text>
-
-            <TextInput
-              placeholder="Description"
-              value={description}
-              onChangeText={setDescription}
+          </View>
+          {/* Income Card */}
+          <View
+            style={{
+              backgroundColor: COLORS.card,
+              borderRadius: 20,
+              padding: 18,
+              shadowColor: "#000",
+              shadowOpacity: 0.06,
+              shadowRadius: 12,
+              shadowOffset: { width: 0, height: 6 },
+              elevation: 3,
+            }}
+          >
+            <Text style={{ color: "#666", marginBottom: 8 }}>
+              Income
+            </Text>
+            <Text
               style={{
-                borderWidth: 1,
-                borderColor: "#ddd",
-                borderRadius: 8,
-                padding: 12,
-                marginBottom: 12,
-                backgroundColor: "#f9f9f9",
+                fontSize: 24,
+                fontWeight: "bold",
+                color: "#10b981",
               }}
-            />
+            >
+              ₱{summary.income.toFixed(2)}
+            </Text>
+          </View>
 
-            <TextInput
-              placeholder="Amount"
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="decimal-pad"
+          {/* Expenses Card */}
+          <View
+            style={{
+              backgroundColor: COLORS.card,
+              borderRadius: 20,
+              padding: 18,
+              shadowColor: "#000",
+              shadowOpacity: 0.06,
+              shadowRadius: 12,
+              shadowOffset: { width: 0, height: 6 },
+              elevation: 3,
+            }}
+          >
+            <Text style={{ color: "#666", marginBottom: 8 }}>
+              Expenses
+            </Text>
+            <Text
               style={{
-                borderWidth: 1,
-                borderColor: "#ddd",
-                borderRadius: 8,
-                padding: 12,
-                marginBottom: 12,
-                backgroundColor: "#f9f9f9",
+                fontSize: 24,
+                fontWeight: "bold",
+                color: "#ef4444",
               }}
-            />
+            >
+              ₱{summary.expenses.toFixed(2)}
+            </Text>
+          </View>
 
+          {/* Balance Card */}
+
+        </View>
+
+
+
+        {/* Filter Buttons */}
+        <View
+          style={{
+            marginTop: 20,
+            flexDirection: "row",
+            gap: 8,
+            marginBottom: 16,
+            paddingHorizontal: 8,
+          }}
+        >
+          {(["all", "income", "expense"] as FilterType[]).map(
+            (f) => (
+              <TouchableOpacity
+                key={f}
+                onPress={() => setFilter(f)}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    filter === f
+                      ? "#3b82f6"
+                      : "#e5e7eb",
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight:
+                      filter === f ? "bold" : "500",
+                    color:
+                      filter === f ? "white" : "#1a1a2e",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {f}
+                </Text>
+              </TouchableOpacity>
+            )
+          )}
+        </View>
+
+        {/* Transactions List */}
+        <FlatList
+
+          scrollEnabled={false}
+          data={filteredTransactions}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingHorizontal: 8 }}
+          renderItem={({ item }) => (
             <View
               style={{
-                flexDirection: "row",
-                gap: 12,
-                marginBottom: 12,
+                marginVertical: 6,
+                backgroundColor: COLORS.card,
+                borderRadius: 20,
+                padding: 18,
+                shadowColor: "#000",
+                shadowOpacity: 0.06,
+                shadowRadius: 12,
+                shadowOffset: { width: 0, height: 6 },
+                elevation: 3,
               }}
             >
-              {/* Category Dropdown */}
-              <View style={{ flex: 1 }}>
-                <TouchableOpacity
-                  onPress={() => setShowCategoryModal(true)}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: 8,
+                }}
+              >
+                <Text
                   style={{
-                    borderWidth: 1,
-                    borderColor: "#ddd",
-                    borderRadius: 8,
-                    padding: 12,
-                    backgroundColor: "#f9f9f9",
-                    justifyContent: "center",
+                    fontWeight: "bold",
+                    fontSize: 16,
+                    flex: 1,
+                  }}
+                >
+                  {item.category_name}
+                </Text>
+                <Text
+                  style={{
+                    fontWeight: "600",
+                    fontSize: 16,
+                    color: item.type === "income" ? COLORS.income : COLORS.expense
+                  }}
+                >
+                  {item.type === "income" ? "+" : "-"}₱
+                  {item.amount}
+                </Text>
+
+              </View>
+              <Text
+                style={{
+                  color: "#666",
+                  marginBottom: 12,
+                  textTransform: "lowercase",
+                }}
+              >
+                {item.type} - {item.description}
+              </Text>
+              <Text
+                style={{
+                  color: "#999",
+                  fontSize: 12,
+                }}
+              >
+                {new Date(item.transaction_date).toLocaleDateString()}
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 8,
+                  justifyContent: "flex-end",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() =>
+                    handleDeleteTransaction(item.id)
+                  }
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 6,
+                    backgroundColor: "#fee2e2",
                   }}
                 >
                   <Text
                     style={{
-                      color: selectedCategory ? "#000" : "#999",
-                      fontSize: 14,
+                      color: "#dc2626",
+                      fontWeight: "600",
                     }}
                   >
-                    {selectedCategory
-                      ? categories.find(
-                        (c) => c.id === selectedCategory
-                      )?.name || "Select Category"
-                      : "Select Category"}
+                    Delete
                   </Text>
                 </TouchableOpacity>
-
-                {/* Category Modal */}
-                <Modal
-                  visible={showCategoryModal}
-                  transparent
-                  animationType="slide"
-                  onRequestClose={() =>
-                    setShowCategoryModal(false)
-                  }
+                <TouchableOpacity
+                  onPress={() => openEditModal(item)}
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 6,
+                    backgroundColor: "#e5e7eb",
+                  }}
                 >
-                  <View
+                  <Text
                     style={{
-                      flex: 1,
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      justifyContent: "flex-end",
+                      color: "#1a1a2e",
+                      fontWeight: "600",
                     }}
+                  >
+                    Edit
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+          ListEmptyComponent={
+            <View
+              style={{
+                backgroundColor: "white",
+                borderRadius: 8,
+                padding: 32,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#999", fontSize: 16 }}>
+                No transactions yet
+              </Text>
+            </View>
+          }
+        />
+
+      </ScrollView>
+      <Modal
+        visible={showTransactionModal}
+        transparent
+        animationType="slide"
+        presentationStyle='fullScreen'
+        onRequestClose={closeTransactionModal}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.45)",
+            justifyContent: "flex-end",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.card,
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              padding: 20,
+            }}
+          >
+            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 16 }}>
+              {editingId ? "Edit Transaction" : "Add Transaction"}
+            </Text>
+
+
+
+            {/* Add Transaction Section */}
+            <View
+              style={{
+                backgroundColor: COLORS.card,
+                borderRadius: 20,
+                padding: 18,
+                shadowColor: "#000",
+                shadowOpacity: 0.06,
+                shadowRadius: 12,
+                shadowOffset: { width: 0, height: 6 },
+                elevation: 3,
+              }}
+            >
+              <TextInput
+                placeholder="Description"
+                value={description}
+                onChangeText={setDescription}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ddd",
+                  borderRadius: 8,
+                  padding: 12,
+                  marginBottom: 12,
+                  backgroundColor: "#f9f9f9",
+                }}
+              />
+
+              <TextInput
+                placeholder="Amount"
+                value={amount}
+                onChangeText={setAmount}
+                keyboardType="decimal-pad"
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ddd",
+                  borderRadius: 8,
+                  padding: 12,
+                  marginBottom: 12,
+                  backgroundColor: "#f9f9f9",
+                }}
+              />
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 12,
+                  marginBottom: 12,
+                }}
+              >
+                {/* Category Dropdown */}
+                <View style={{ flex: 1 }}>
+                  <TouchableOpacity
+                    onPress={() => setShowCategoryModal(true)}
+                    style={{
+                      borderWidth: 1,
+                      borderColor: "#ddd",
+                      borderRadius: 8,
+                      padding: 12,
+                      backgroundColor: "#f9f9f9",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: selectedCategory ? "#000" : "#999",
+                        fontSize: 14,
+                      }}
+                    >
+                      {selectedCategory
+                        ? categories.find(
+                          (c) => c.id === selectedCategory
+                        )?.name || "Select Category"
+                        : "Select Category"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Category Modal */}
+                  <Modal
+                    visible={showCategoryModal}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() =>
+                      setShowCategoryModal(false)
+                    }
                   >
                     <View
                       style={{
-                        backgroundColor: "white",
-                        borderTopLeftRadius: 12,
-                        borderTopRightRadius: 12,
-                        paddingVertical: 12,
+                        flex: 1,
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        justifyContent: "flex-end",
                       }}
                     >
                       <View
                         style={{
-                          flexDirection: "row",
-                          justifyContent:
-                            "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingBottom: 12,
-                          borderBottomWidth: 1,
-                          borderBottomColor: "#eee",
+                          backgroundColor: "white",
+                          borderTopLeftRadius: 12,
+                          borderTopRightRadius: 12,
+                          paddingVertical: 12,
                         }}
                       >
-                        <Text
+                        <View
                           style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
+                            flexDirection: "row",
+                            justifyContent:
+                              "space-between",
+                            alignItems: "center",
+                            paddingHorizontal: 16,
+                            paddingBottom: 12,
+                            borderBottomWidth: 1,
+                            borderBottomColor: "#eee",
                           }}
-                        >
-                          Select Category
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() =>
-                            setShowCategoryModal(false)
-                          }
                         >
                           <Text
                             style={{
-                              fontSize: 18,
-                              color: "#3b82f6",
+                              fontSize: 16,
+                              fontWeight: "bold",
                             }}
                           >
-                            ✕
+                            Select Category
                           </Text>
-                        </TouchableOpacity>
-                      </View>
-                      <FlatList
-                        data={filteredCategories}
-                        keyExtractor={(item) => item.id}
-                        scrollEnabled={
-                          filteredCategories.length > 5
-                        }
-                        style={{
-                          maxHeight: 300,
-                        }}
-                        renderItem={({ item }) => (
                           <TouchableOpacity
-                            onPress={() => {
-                              setSelectedCategory(
-                                item.id
-                              );
-                              setShowCategoryModal(
-                                false
-                              );
-                            }}
-                            style={{
-                              paddingHorizontal: 16,
-                              paddingVertical: 12,
-                              borderBottomWidth: 1,
-                              borderBottomColor:
-                                "#eee",
-                              backgroundColor:
-                                selectedCategory ===
-                                  item.id
-                                  ? "#eff6ff"
-                                  : "white",
-                            }}
+                            onPress={() =>
+                              setShowCategoryModal(false)
+                            }
                           >
                             <Text
                               style={{
-                                fontSize: 16,
-                                color:
-                                  selectedCategory ===
-                                    item.id
-                                    ? "#3b82f6"
-                                    : "#000",
-                                fontWeight:
-                                  selectedCategory ===
-                                    item.id
-                                    ? "600"
-                                    : "400",
+                                fontSize: 18,
+                                color: "#3b82f6",
                               }}
                             >
-                              {item.name}
+                              ✕
                             </Text>
                           </TouchableOpacity>
-                        )}
-                      />
-                    </View>
-                  </View>
-                </Modal>
-              </View>
-
-              {/* Type Dropdown */}
-              <View style={{ flex: 1 }}>
-                <TouchableOpacity
-                  onPress={() => setShowTypeModal(true)}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#ddd",
-                    borderRadius: 8,
-                    padding: 12,
-                    backgroundColor: "#f9f9f9",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "#000",
-                      fontSize: 14,
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {transactionType}
-                  </Text>
-                </TouchableOpacity>
-
-                {/* Type Modal */}
-                <Modal
-                  visible={showTypeModal}
-                  transparent
-                  animationType="slide"
-                  onRequestClose={() =>
-                    setShowTypeModal(false)
-                  }
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      justifyContent: "flex-end",
-                    }}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: "white",
-                        borderTopLeftRadius: 12,
-                        borderTopRightRadius: 12,
-                        paddingVertical: 12,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent:
-                            "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingBottom: 12,
-                          borderBottomWidth: 1,
-                          borderBottomColor: "#eee",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Select Type
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() =>
-                            setShowTypeModal(false)
+                        </View>
+                        <FlatList
+                          data={filteredCategories}
+                          keyExtractor={(item) => item.id}
+                          scrollEnabled={
+                            filteredCategories.length > 5
                           }
-                        >
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              color: "#3b82f6",
-                            }}
-                          >
-                            ✕
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                      <View>
-                        {["expense", "income"].map(
-                          (type) => (
+                          style={{
+                            maxHeight: 300,
+                          }}
+                          renderItem={({ item }) => (
                             <TouchableOpacity
-                              key={type}
                               onPress={() => {
-                                setTransactionType(
-                                  type as
-                                  | "income"
-                                  | "expense"
+                                setSelectedCategory(
+                                  item.id
                                 );
-                                setShowTypeModal(
+                                setShowCategoryModal(
                                   false
                                 );
-                                if (type !== transactionType) {
-                                  setSelectedCategory("");
-                                }
                               }}
                               style={{
-                                paddingHorizontal:
-                                  16,
+                                paddingHorizontal: 16,
                                 paddingVertical: 12,
                                 borderBottomWidth: 1,
                                 borderBottomColor:
                                   "#eee",
                                 backgroundColor:
-                                  transactionType ===
-                                    type
+                                  selectedCategory ===
+                                    item.id
                                     ? "#eff6ff"
                                     : "white",
                               }}
@@ -742,252 +818,248 @@ export default function TransactionsScreen({ token }: Props) {
                                 style={{
                                   fontSize: 16,
                                   color:
-                                    transactionType ===
-                                      type
+                                    selectedCategory ===
+                                      item.id
                                       ? "#3b82f6"
                                       : "#000",
                                   fontWeight:
-                                    transactionType ===
-                                      type
+                                    selectedCategory ===
+                                      item.id
                                       ? "600"
                                       : "400",
-                                  textTransform:
-                                    "capitalize",
                                 }}
                               >
-                                {type}
+                                {item.name}
                               </Text>
                             </TouchableOpacity>
-                          )
-                        )}
+                          )}
+                        />
                       </View>
                     </View>
-                  </View>
-                </Modal>
-              </View>
-            </View>
+                  </Modal>
+                </View>
 
-            <View style={{ flexDirection: "row", gap: 8 }}>
-              <TouchableOpacity
-                onPress={handleAddTransaction}
-                style={{
-                  flex: 1,
-                  backgroundColor: COLORS.primary,
-                  borderRadius: 16,
-                  padding: 14,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: 16,
-                  }}
-                >
-                  {editingId ? "Update" : "Add"}
-                </Text>
-              </TouchableOpacity>
-              {editingId && (
+                {/* Type Dropdown */}
+                <View style={{ flex: 1 }}>
+                  <TouchableOpacity
+                    onPress={() => setShowTypeModal(true)}
+                    style={{
+                      borderWidth: 1,
+                      borderColor: "#ddd",
+                      borderRadius: 8,
+                      padding: 12,
+                      backgroundColor: "#f9f9f9",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#000",
+                        fontSize: 14,
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {transactionType}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Type Modal */}
+                  <Modal
+                    visible={showTypeModal}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() =>
+                      setShowTypeModal(false)
+                    }
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          borderTopLeftRadius: 12,
+                          borderTopRightRadius: 12,
+                          paddingVertical: 12,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent:
+                              "space-between",
+                            alignItems: "center",
+                            paddingHorizontal: 16,
+                            paddingBottom: 12,
+                            borderBottomWidth: 1,
+                            borderBottomColor: "#eee",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Select Type
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() =>
+                              setShowTypeModal(false)
+                            }
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                color: "#3b82f6",
+                              }}
+                            >
+                              ✕
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                        <View>
+                          {["expense", "income"].map(
+                            (type) => (
+                              <TouchableOpacity
+                                key={type}
+                                onPress={() => {
+                                  setTransactionType(
+                                    type as
+                                    | "income"
+                                    | "expense"
+                                  );
+                                  setShowTypeModal(
+                                    false
+                                  );
+                                  if (type !== transactionType) {
+                                    setSelectedCategory("");
+                                  }
+                                }}
+                                style={{
+                                  paddingHorizontal:
+                                    16,
+                                  paddingVertical: 12,
+                                  borderBottomWidth: 1,
+                                  borderBottomColor:
+                                    "#eee",
+                                  backgroundColor:
+                                    transactionType ===
+                                      type
+                                      ? "#eff6ff"
+                                      : "white",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color:
+                                      transactionType ===
+                                        type
+                                        ? "#3b82f6"
+                                        : "#000",
+                                    fontWeight:
+                                      transactionType ===
+                                        type
+                                        ? "600"
+                                        : "400",
+                                    textTransform:
+                                      "capitalize",
+                                  }}
+                                >
+                                  {type}
+                                </Text>
+                              </TouchableOpacity>
+                            )
+                          )}
+                        </View>
+                      </View>
+                    </View>
+                  </Modal>
+                </View>
+              </View>
+
+              <View style={{ flexDirection: "row", gap: 8 }}>
                 <TouchableOpacity
-                  onPress={handleCancelEdit}
+                  onPress={handleAddTransaction}
                   style={{
                     flex: 1,
-                    backgroundColor: "#e5e7eb",
-                    borderRadius: 8,
-                    padding: 12,
+                    backgroundColor: COLORS.primary,
+                    borderRadius: 16,
+                    padding: 14,
                     alignItems: "center",
                   }}
                 >
                   <Text
                     style={{
-                      color: "#1a1a2e",
+                      color: "white",
                       fontWeight: "bold",
                       fontSize: 16,
                     }}
                   >
-                    Cancel
+                    {editingId ? "Update" : "Add"}
                   </Text>
                 </TouchableOpacity>
-              )}
+                {editingId && (
+                  <TouchableOpacity
+                    onPress={handleCancelEdit}
+                    style={{
+                      flex: 1,
+                      backgroundColor: COLORS.primary,
+                      borderRadius: 16,
+                      padding: 14,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text
+                      style={{ color: "white", fontWeight: "bold", fontSize: 16 }}
+                    >
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <TouchableOpacity
+                onPress={closeTransactionModal}
+                style={{
+                  backgroundColor: COLORS.primary,
+                  borderRadius: 16,
+                  padding: 14,
+                  alignItems: "center",
+                  marginTop: 10,
+                }}>
+                <Text style={{ color: "white", fontWeight: "bold", fontSize: 16 }}>Close</Text>
+              </TouchableOpacity>
             </View>
           </View>
+        </View>
+      </Modal>
+      <TouchableOpacity
+        onPress={openAddModal}
+        style={{
+          position: "absolute",
+          right: 24,
+          bottom: 32,
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          backgroundColor: COLORS.primary,
+          alignItems: "center",
+          justifyContent: "center",
+          elevation: 6,
+          shadowColor: "#000",
+          shadowOpacity: 0.2,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 4 },
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 32, fontWeight: "600" }}>+</Text>
+      </TouchableOpacity>
+    </View>
 
-          {/* Filter Buttons */}
-          <View
-            style={{
-              marginTop: 20,
-              flexDirection: "row",
-              gap: 8,
-              marginBottom: 16,
-              paddingHorizontal: 8,
-            }}
-          >
-            {(["all", "income", "expense"] as FilterType[]).map(
-              (f) => (
-                <TouchableOpacity
-                  key={f}
-                  onPress={() => setFilter(f)}
-                  style={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                    borderRadius: 8,
-                    backgroundColor:
-                      filter === f
-                        ? "#3b82f6"
-                        : "#e5e7eb",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontWeight:
-                        filter === f ? "bold" : "500",
-                      color:
-                        filter === f ? "white" : "#1a1a2e",
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {f}
-                  </Text>
-                </TouchableOpacity>
-              )
-            )}
-          </View>
-
-          {/* Transactions List */}
-          <FlatList
-
-            scrollEnabled={false}
-            data={filteredTransactions}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingHorizontal: 8 }}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  marginVertical: 6,
-                  backgroundColor: COLORS.card,
-                  borderRadius: 20,
-                  padding: 18,
-                  shadowColor: "#000",
-                  shadowOpacity: 0.06,
-                  shadowRadius: 12,
-                  shadowOffset: { width: 0, height: 6 },
-                  elevation: 3,
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: 8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 16,
-                      flex: 1,
-                    }}
-                  >
-                    {item.category_name}
-                  </Text>
-                  <Text
-                    style={{
-                      fontWeight: "600",
-                      fontSize: 16,
-                      color: item.type === "income" ? COLORS.income : COLORS.expense
-                    }}
-                  >
-                    {item.type === "income" ? "+" : "-"}₱
-                    {item.amount}
-                  </Text>
-
-                </View>
-                <Text
-                  style={{
-                    color: "#666",
-                    marginBottom: 12,
-                    textTransform: "lowercase",
-                  }}
-                >
-                  {item.type} - {item.description}
-                </Text>
-                <Text
-                  style={{
-                    color: "#999",
-                    fontSize: 12,
-                  }}
-                >
-                  {new Date(item.transaction_date).toLocaleDateString()}
-                </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 8,
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() =>
-                      handleDeleteTransaction(item.id)
-                    }
-                    style={{
-                      paddingHorizontal: 12,
-                      paddingVertical: 6,
-                      borderRadius: 6,
-                      backgroundColor: "#fee2e2",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "#dc2626",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Delete
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() =>
-                      handleEditTransaction(item)
-                    }
-                    style={{
-                      paddingHorizontal: 12,
-                      paddingVertical: 6,
-                      borderRadius: 6,
-                      backgroundColor: "#e5e7eb",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "#1a1a2e",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Edit
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-            ListEmptyComponent={
-              <View
-                style={{
-                  backgroundColor: "white",
-                  borderRadius: 8,
-                  padding: 32,
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ color: "#999", fontSize: 16 }}>
-                  No transactions yet
-                </Text>
-              </View>
-            }
-          />
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
   );
 }
