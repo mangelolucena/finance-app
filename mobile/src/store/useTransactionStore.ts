@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import Transaction from "../types/transaction";
 
 type FilterType = "all" | "income" | "expense";
 
@@ -14,6 +15,10 @@ type TransactionStore = {
 
   editingId: string | null;
   setEditingId: (id: string | null) => void;
+
+  transactions: Transaction[];
+  setTransactions: (transactions: Transaction[]) => void;
+
 };
 
 export const useTransactionStore = create<TransactionStore>((set) => ({
@@ -28,4 +33,8 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
 
   editingId: null,
   setEditingId: (editingId) => set({ editingId }),
+
+  transactions: [],
+  setTransactions: (transactions) => set({ transactions }),
+
 }));

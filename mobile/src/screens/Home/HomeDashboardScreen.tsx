@@ -10,11 +10,12 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
-import Transaction from "../types/transaction";
-import Category from "../types/category";
-import FilterType from "../types/filterType";
-import COLORS from "../constants/colors";
-import { useTransactionStore } from "../store/useTransactionStore";
+import Transaction from "../../types/transaction";
+import Category from "../../types/category";
+import FilterType from "../../types/filterType";
+import COLORS from "../../constants/colors";
+import { useTransactionStore } from "../../store/useTransactionStore";
+import { Summary } from "./components/Summary";
 
 type Props = {
   token: string;
@@ -56,7 +57,6 @@ const expenseCategoryNames = [
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function HomeDashboardScreen({ token }: Props) {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -73,6 +73,8 @@ export default function HomeDashboardScreen({ token }: Props) {
     setTransactionType,
     editingId,
     setEditingId,
+    transactions,
+    setTransactions,
   } = useTransactionStore();
 
   const openAddModal = () => {
@@ -246,21 +248,6 @@ export default function HomeDashboardScreen({ token }: Props) {
     fetchCategories();
   }, []);
 
-  const calculateSummary = () => {
-    const income = transactions
-      .filter((t) => t.type === "income")
-      .reduce((sum, t) => sum + Number(t.amount), 0);
-
-    const expenses = transactions
-      .filter((t) => t.type === "expense")
-      .reduce((sum, t) => sum + Number(t.amount), 0);
-
-    return {
-      income,
-      expenses,
-      balance: income - expenses,
-    };
-  };
 
   const getFilteredTransactions = () => {
     if (filter === "all") return transactions;
@@ -275,7 +262,6 @@ export default function HomeDashboardScreen({ token }: Props) {
     return expenseCategoryNames.includes(category.name);
   });
 
-  const summary = calculateSummary();
   const filteredTransactions = getFilteredTransactions();
 
   return (
@@ -288,29 +274,8 @@ export default function HomeDashboardScreen({ token }: Props) {
         <View style={styles.header}>
           <Text style={styles.logo}>PesoTrack</Text>
         </View>
+        <Summary />
 
-        <View style={styles.summaryContainer}>
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Balance</Text>
-            <Text style={styles.balanceAmount}>
-              ₱{summary.balance.toFixed(2)}
-            </Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Income</Text>
-            <Text style={styles.incomeAmount}>
-              ₱{summary.income.toFixed(2)}
-            </Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Expenses</Text>
-            <Text style={styles.expenseAmount}>
-              ₱{summary.expenses.toFixed(2)}
-            </Text>
-          </View>
-        </View>
 
         <View style={styles.filterContainer}>
           {(["all", "income", "expense"] as FilterType[]).map((f) => (

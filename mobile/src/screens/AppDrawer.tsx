@@ -7,7 +7,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 
-import HomeDashboardScreen from "./HomeDashboardScreen";
+import HomeDashboardScreen from "./Home/HomeDashboardScreen";
 
 const Drawer = createDrawerNavigator();
 
