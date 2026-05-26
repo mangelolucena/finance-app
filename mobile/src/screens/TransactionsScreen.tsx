@@ -14,6 +14,7 @@ import Transaction from "../types/transaction";
 import Category from "../types/category";
 import FilterType from "../types/filterType";
 import COLORS from "../constants/colors";
+import { useTransactionStore } from "../store/useTransactionStore";
 
 type Props = {
   token: string;
@@ -59,21 +60,23 @@ export default function TransactionsScreen({ token }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [transactionType, setTransactionType] = useState<"income" | "expense">(
-    "expense"
-  );
-  const [filter, setFilter] = useState<FilterType>("all");
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingTransaction, setEditingTransaction] =
-    useState<Transaction | null>(null);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
 
+  const {
+    filter,
+    setFilter,
+    selectedCategory,
+    setSelectedCategory,
+    transactionType,
+    setTransactionType,
+    editingId,
+    setEditingId,
+  } = useTransactionStore();
+
   const openAddModal = () => {
     setEditingId(null);
-    setEditingTransaction(null);
     setDescription("");
     setAmount("");
     setSelectedCategory("");
@@ -83,7 +86,6 @@ export default function TransactionsScreen({ token }: Props) {
 
   const openEditModal = (transaction: Transaction) => {
     setEditingId(transaction.id);
-    setEditingTransaction(transaction);
     setDescription(transaction.description);
     setAmount(transaction.amount);
     setSelectedCategory(transaction.category_id);
@@ -233,7 +235,6 @@ export default function TransactionsScreen({ token }: Props) {
 
   const handleCancelEdit = () => {
     setEditingId(null);
-    setEditingTransaction(null);
     setDescription("");
     setAmount("");
     setSelectedCategory("");
