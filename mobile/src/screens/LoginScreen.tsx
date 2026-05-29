@@ -86,7 +86,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#ECFDF5",
+        backgroundColor: "#FFF7F8",
       }}
     >
       <KeyboardAvoidingView
@@ -100,8 +100,10 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
         <View
           style={{
             backgroundColor: "#FFFFFF",
-            borderRadius: 28,
+            borderRadius: 32,
             padding: 28,
+            borderWidth: 1,
+            borderColor: "#F4D7DD",
             shadowColor: "#000",
             shadowOpacity: 0.08,
             shadowRadius: 16,
@@ -121,8 +123,8 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
             <Image
               source={require("../../assets/icon.png")}
               style={{
-                width: 90,
-                height: 90,
+                width: 96,
+                height: 96,
                 marginBottom: 14,
               }}
               resizeMode="contain"
@@ -132,21 +134,32 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
               style={{
                 fontSize: 34,
                 fontWeight: "800",
-                color: "#064E3B",
+                color: "#5F7D44",
               }}
             >
-              PesoTrack
+              PiggyPal
+            </Text>
+
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+                color: "#374151",
+                marginTop: 10,
+              }}
+            >
+              Welcome Back 👋
             </Text>
 
             <Text
               style={{
                 marginTop: 6,
-                color: "#6B7280",
+                color: "#718096",
                 fontSize: 15,
                 textAlign: "center",
               }}
             >
-              Manage your money smarter and track your finances easily.
+              Your money's best friend.
             </Text>
           </View>
 
@@ -154,7 +167,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
             <Text
               style={{
                 marginBottom: 6,
-                color: "#065F46",
+                color: "#5F7D44",
                 fontWeight: "600",
               }}
             >
@@ -177,10 +190,8 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
                 borderWidth: 1,
                 borderRadius: 16,
                 padding: 15,
-                borderColor: errors.email
-                  ? "#DC2626"
-                  : "#D1FAE5",
-                backgroundColor: "#F9FAFB",
+                borderColor: errors.email ? "#DC2626" : "#F4D7DD",
+                backgroundColor: "#FFFDFD",
                 fontSize: 16,
               }}
             />
@@ -202,7 +213,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
             <Text
               style={{
                 marginBottom: 6,
-                color: "#065F46",
+                color: "#5F7D44",
                 fontWeight: "600",
               }}
             >
@@ -224,10 +235,8 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
                 borderWidth: 1,
                 borderRadius: 16,
                 padding: 15,
-                borderColor: errors.password
-                  ? "#DC2626"
-                  : "#D1FAE5",
-                backgroundColor: "#F9FAFB",
+                borderColor: errors.password ? "#DC2626" : "#F4D7DD",
+                backgroundColor: "#FFFDFD",
                 fontSize: 16,
               }}
             />
@@ -251,9 +260,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
             style={{
               height: 56,
               borderRadius: 18,
-              backgroundColor: loading
-                ? "#6EE7B7"
-                : "#059669",
+              backgroundColor: loading ? "#A3C58A" : "#7BA05B",
               alignItems: "center",
               justifyContent: "center",
               marginBottom: 16,
@@ -284,7 +291,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: Props) {
           >
             <Text
               style={{
-                color: "#059669",
+                color: "#E98FA3",
                 fontWeight: "700",
               }}
             >
