@@ -11,9 +11,27 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
-import COLORS from '../constants/colors';
+import COLORS from "../constants/colors";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+const assetCategories = [
+  "Cash",
+  "Bank Account",
+  "Investment",
+  "Vehicle",
+  "Real Estate",
+  "Business",
+  "Other Asset",
+];
+
+const liabilityCategories = [
+  "Credit Card",
+  "Personal Loan",
+  "Car Loan",
+  "Mortgage",
+  "Other Debt",
+];
 
 type NetWorthItem = {
   id: string;
@@ -43,6 +61,7 @@ export default function NetWorthScreen({ token }: Props) {
   });
 
   const [showModal, setShowModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingItem, setEditingItem] = useState<NetWorthItem | null>(null);
 
   const [name, setName] = useState("");
@@ -50,6 +69,9 @@ export default function NetWorthScreen({ token }: Props) {
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const filteredCategories =
+    type === "asset" ? assetCategories : liabilityCategories;
 
   const fetchNetWorth = async () => {
     try {
@@ -116,7 +138,7 @@ export default function NetWorthScreen({ token }: Props) {
     }
 
     if (!category.trim()) {
-      Alert.alert("Validation", "Category is required");
+      Alert.alert("Validation", "Please select a category");
       return false;
     }
 
@@ -156,7 +178,7 @@ export default function NetWorthScreen({ token }: Props) {
           body: JSON.stringify({
             name: name.trim(),
             type,
-            category: category.trim(),
+            category,
             amount: Number(amount),
           }),
         }
@@ -342,12 +364,67 @@ export default function NetWorthScreen({ token }: Props) {
                 style={styles.input}
               />
 
-              <TextInput
-                placeholder="Category"
-                value={category}
-                onChangeText={setCategory}
-                style={styles.input}
-              />
+              <TouchableOpacity
+                onPress={() => setShowCategoryModal(true)}
+                style={styles.dropdownButton}
+              >
+                <Text
+                  style={[
+                    styles.dropdownText,
+                    !category && styles.placeholderText,
+                  ]}
+                >
+                  {category || "Select Category"}
+                </Text>
+              </TouchableOpacity>
+
+              <Modal
+                visible={showCategoryModal}
+                transparent
+                animationType="none"
+                onRequestClose={() => setShowCategoryModal(false)}
+              >
+                <View style={styles.modalOverlay}>
+                  <View style={styles.bottomSheet}>
+                    <View style={styles.modalHeader}>
+                      <Text style={styles.selectorTitle}>Select Category</Text>
+
+                      <TouchableOpacity
+                        onPress={() => setShowCategoryModal(false)}
+                      >
+                        <Text style={styles.closeIcon}>✕</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <FlatList
+                      data={filteredCategories}
+                      keyExtractor={(item) => item}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setCategory(item);
+                            setShowCategoryModal(false);
+                          }}
+                          style={[
+                            styles.selectorItem,
+                            category === item && styles.activeSelectorItem,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.selectorItemText,
+                              category === item &&
+                                styles.activeSelectorItemText,
+                            ]}
+                          >
+                            {item}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    />
+                  </View>
+                </View>
+              </Modal>
 
               <TextInput
                 placeholder="Amount"
@@ -361,7 +438,10 @@ export default function NetWorthScreen({ token }: Props) {
                 {(["asset", "liability"] as const).map((option) => (
                   <TouchableOpacity
                     key={option}
-                    onPress={() => setType(option)}
+                    onPress={() => {
+                      setType(option);
+                      setCategory("");
+                    }}
                     style={[
                       styles.typeButton,
                       type === option && styles.activeTypeButton,
@@ -379,17 +459,15 @@ export default function NetWorthScreen({ token }: Props) {
                 ))}
               </View>
 
-              <View style={styles.formActionRow}>
-                <TouchableOpacity
-                  onPress={handleSaveItem}
-                  style={styles.primaryButton}
-                  disabled={saving}
-                >
-                  <Text style={styles.primaryButtonText}>
-                    {saving ? "Saving..." : editingItem ? "Update" : "Add"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                onPress={handleSaveItem}
+                style={styles.primaryButton}
+                disabled={saving}
+              >
+                <Text style={styles.primaryButtonText}>
+                  {saving ? "Saving..." : editingItem ? "Update" : "Add"}
+                </Text>
+              </TouchableOpacity>
 
               <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
                 <Text style={styles.primaryButtonText}>Close</Text>
@@ -587,6 +665,63 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: "#F9F9F9",
   },
+  dropdownButton: {
+    borderWidth: 1,
+    borderColor: "#DDDDDD",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    backgroundColor: "#F9F9F9",
+  },
+  dropdownText: {
+    color: "#000000",
+    fontSize: 14,
+  },
+  placeholderText: {
+    color: "#999999",
+  },
+  bottomSheet: {
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    paddingVertical: 12,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  selectorTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  closeIcon: {
+    fontSize: 18,
+    color: COLORS.primary,
+  },
+  selectorItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+    backgroundColor: "#FFFFFF",
+  },
+  activeSelectorItem: {
+    backgroundColor: COLORS.primaryLight,
+  },
+  selectorItemText: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "400",
+  },
+  activeSelectorItemText: {
+    color: COLORS.primary,
+    fontWeight: "600",
+  },
   typeContainer: {
     flexDirection: "row",
     gap: 8,
@@ -611,12 +746,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
   },
-  formActionRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
   primaryButton: {
-    flex: 1,
     backgroundColor: COLORS.primary,
     borderRadius: 16,
     padding: 14,
