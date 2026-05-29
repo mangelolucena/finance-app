@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/", authMiddleware, async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.userId;
 
         const itemsResult = await pool.query(
             `
@@ -21,21 +21,9 @@ router.get("/", authMiddleware, async (req, res) => {
         const summaryResult = await pool.query(
             `
             SELECT
-                COALESCE(
-                    SUM(CASE WHEN type = 'asset' THEN amount ELSE 0 END),
-                    0
-                ) AS total_assets,
-
-                COALESCE(
-                    SUM(CASE WHEN type = 'liability' THEN amount ELSE 0 END),
-                    0
-                ) AS total_liabilities,
-
-                COALESCE(
-                    SUM(CASE WHEN type = 'asset' THEN amount ELSE -amount END),
-                    0
-                ) AS net_worth
-
+                COALESCE(SUM(CASE WHEN type = 'asset' THEN amount ELSE 0 END), 0) AS total_assets,
+                COALESCE(SUM(CASE WHEN type = 'liability' THEN amount ELSE 0 END), 0) AS total_liabilities,
+                COALESCE(SUM(CASE WHEN type = 'asset' THEN amount ELSE -amount END), 0) AS net_worth
             FROM net_worth_items
             WHERE user_id = $1
             `,
