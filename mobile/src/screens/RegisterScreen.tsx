@@ -35,14 +35,23 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
     const newErrors: FormErrors = {};
     const trimmedEmail = email.trim();
 
-    if (!trimmedEmail) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(trimmedEmail)) newErrors.email = "Enter a valid email";
+    if (!trimmedEmail) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(trimmedEmail)) {
+      newErrors.email = "Enter a valid email";
+    }
 
-    if (!password) newErrors.password = "Password is required";
-    else if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
 
-    if (!confirmPassword) newErrors.confirmPassword = "Confirm password is required";
-    else if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Confirm password is required";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -56,7 +65,9 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
 
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           email: email.trim(),
           password,
@@ -81,43 +92,83 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#ECFDF5" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#FFF7F8",
+      }}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1, justifyContent: "center", padding: 24 }}
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          padding: 24,
+        }}
       >
         <View
           style={{
             backgroundColor: "#FFFFFF",
-            borderRadius: 28,
+            borderRadius: 32,
             padding: 28,
+            borderWidth: 1,
+            borderColor: "#F4D7DD",
             shadowColor: "#000",
             shadowOpacity: 0.08,
             shadowRadius: 16,
-            shadowOffset: { width: 0, height: 8 },
+            shadowOffset: {
+              width: 0,
+              height: 8,
+            },
             elevation: 4,
           }}
         >
-          <View style={{ alignItems: "center", marginBottom: 24 }}>
+          <View
+            style={{
+              alignItems: "center",
+              marginBottom: 24,
+            }}
+          >
             <Image
               source={require("../../assets/icon.png")}
-              style={{ width: 84, height: 84, marginBottom: 14 }}
+              style={{
+                width: 92,
+                height: 92,
+                marginBottom: 14,
+              }}
               resizeMode="contain"
             />
 
-            <Text style={{ fontSize: 32, fontWeight: "800", color: "#064E3B" }}>
-              Create Account
+            <Text
+              style={{
+                fontSize: 32,
+                fontWeight: "800",
+                color: "#5F7D44",
+              }}
+            >
+              Join PiggyPal
+            </Text>
+
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+                color: "#374151",
+                marginTop: 10,
+              }}
+            >
+              Start Your Money Journey 🐷
             </Text>
 
             <Text
               style={{
                 marginTop: 6,
-                color: "#6B7280",
+                color: "#718096",
                 fontSize: 15,
                 textAlign: "center",
               }}
             >
-              Start tracking your income and expenses with PiggyPal.
+              Track spending. Build wealth.
             </Text>
           </View>
 
@@ -129,7 +180,10 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
             keyboardType="email-address"
             onChangeText={(value) => {
               setEmail(value);
-              setErrors((prev) => ({ ...prev, email: undefined }));
+              setErrors((prev) => ({
+                ...prev,
+                email: undefined,
+              }));
             }}
           />
 
@@ -141,7 +195,10 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
             secureTextEntry
             onChangeText={(value) => {
               setPassword(value);
-              setErrors((prev) => ({ ...prev, password: undefined }));
+              setErrors((prev) => ({
+                ...prev,
+                password: undefined,
+              }));
             }}
           />
 
@@ -153,7 +210,10 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
             secureTextEntry
             onChangeText={(value) => {
               setConfirmPassword(value);
-              setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+              setErrors((prev) => ({
+                ...prev,
+                confirmPassword: undefined,
+              }));
             }}
           />
 
@@ -163,7 +223,7 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
             style={{
               height: 56,
               borderRadius: 18,
-              backgroundColor: loading ? "#6EE7B7" : "#059669",
+              backgroundColor: loading ? "#A3C58A" : "#7BA05B",
               alignItems: "center",
               justifyContent: "center",
               marginTop: 8,
@@ -173,7 +233,13 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
             {loading ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 17 }}>
+              <Text
+                style={{
+                  color: "#FFFFFF",
+                  fontWeight: "700",
+                  fontSize: 17,
+                }}
+              >
                 Register
               </Text>
             )}
@@ -182,9 +248,17 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
           <Pressable
             onPress={onBackToLogin}
             disabled={loading}
-            style={{ alignItems: "center", paddingVertical: 10 }}
+            style={{
+              alignItems: "center",
+              paddingVertical: 10,
+            }}
           >
-            <Text style={{ color: "#059669", fontWeight: "700" }}>
+            <Text
+              style={{
+                color: "#E98FA3",
+                fontWeight: "700",
+              }}
+            >
               Back to Login
             </Text>
           </Pressable>
@@ -215,7 +289,13 @@ function InputField({
 }: InputFieldProps) {
   return (
     <View style={{ marginBottom: 16 }}>
-      <Text style={{ marginBottom: 6, color: "#065F46", fontWeight: "600" }}>
+      <Text
+        style={{
+          marginBottom: 6,
+          color: "#5F7D44",
+          fontWeight: "600",
+        }}
+      >
         {label}
       </Text>
 
@@ -230,14 +310,20 @@ function InputField({
           borderWidth: 1,
           borderRadius: 16,
           padding: 15,
-          borderColor: error ? "#DC2626" : "#D1FAE5",
-          backgroundColor: "#F9FAFB",
+          borderColor: error ? "#DC2626" : "#F4D7DD",
+          backgroundColor: "#FFFDFD",
           fontSize: 16,
         }}
       />
 
       {error && (
-        <Text style={{ color: "#DC2626", marginTop: 6, fontSize: 13 }}>
+        <Text
+          style={{
+            color: "#DC2626",
+            marginTop: 6,
+            fontSize: 13,
+          }}
+        >
           {error}
         </Text>
       )}
