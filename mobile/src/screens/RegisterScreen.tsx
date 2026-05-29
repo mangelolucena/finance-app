@@ -117,7 +117,7 @@ export default function RegisterScreen({ onBackToLogin }: Props) {
                 textAlign: "center",
               }}
             >
-              Start tracking your income and expenses with PesoTrack.
+              Start tracking your income and expenses with PiggyPal.
             </Text>
           </View>
 

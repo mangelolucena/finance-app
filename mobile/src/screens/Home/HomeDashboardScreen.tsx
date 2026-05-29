@@ -272,7 +272,7 @@ export default function HomeDashboardScreen({ token }: Props) {
         contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.header}>
-          <Text style={styles.logo}>PesoTrack</Text>
+          <Text style={styles.logo}>PiggyPal</Text>
         </View>
         <Summary />
 
