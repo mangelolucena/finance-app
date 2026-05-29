@@ -90,27 +90,25 @@ export default function AppDrawer({
         />
       )}
       screenOptions={{
-        headerTitle: "",
-        headerTintColor: "#5F7D44",
-        drawerStyle: {
-          backgroundColor: "#FFF7F8",
-          width: 300,
-        },
-        drawerActiveBackgroundColor: "#FCE7EC",
-        drawerActiveTintColor: "#5F7D44",
-        drawerInactiveTintColor: "#718096",
-        drawerLabelStyle: {
-          fontSize: 16,
-          fontWeight: "700",
-          marginLeft: -8,
-        },
-        drawerItemStyle: {
-          borderRadius: 18,
-          marginHorizontal: 12,
-          marginVertical: 4,
-          paddingVertical: 4,
-        },
-      }}
+  headerTitle: "",
+  headerTintColor: "#5F7D44",
+  headerStyle: {
+    backgroundColor: "#FFF7F8",
+    elevation: 0,
+    shadowOpacity: 0,
+    borderBottomWidth: 0,
+  },
+  headerLeftContainerStyle: {
+    paddingLeft: 16,
+  },
+  drawerStyle: {
+    backgroundColor: "#FFF7F8",
+    width: 300,
+  },
+  drawerActiveBackgroundColor: "#FCE7EC",
+  drawerActiveTintColor: "#5F7D44",
+  drawerInactiveTintColor: "#718096",
+}}
     >
       <Drawer.Screen
         name="Home"
