@@ -31,8 +31,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-secure-store",
-      "expo-asset"
+      "expo-asset",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

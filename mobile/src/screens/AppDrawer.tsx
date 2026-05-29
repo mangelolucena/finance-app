@@ -5,9 +5,11 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 
+
 import { Ionicons } from "@expo/vector-icons";
 
 import HomeDashboardScreen from "./Home/HomeDashboardScreen";
+import NetWorthScreen from "./NetWorthScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -69,6 +71,26 @@ export default function AppDrawer({
       >
         {(props) => (
           <HomeDashboardScreen
+            {...props}
+            token={token}
+          />
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen
+        name="Net Worth"
+        options={{
+          headerTitle: '',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons
+              name='wallet-outline'
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      >
+        {(props) => (
+          <NetWorthScreen
             {...props}
             token={token}
           />
