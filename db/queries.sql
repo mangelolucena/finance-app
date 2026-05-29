@@ -53,3 +53,7 @@ JOIN categories c
 ON t.category_id = c.id
 WHERE t.type = 'expense'
 GROUP BY c.name;
+
+-- Income by category
+SELECT *
+FROM net_worth_items;
