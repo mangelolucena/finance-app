@@ -1,459 +1,661 @@
 import { useEffect, useState } from "react";
 import {
-    View,
-    Text,
-    FlatList,
-    ActivityIndicator,
-    StyleSheet,
-    Modal,
-    TextInput,
-    Pressable,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  ScrollView,
+  Modal,
+  StyleSheet,
+  ActivityIndicator,
 } from "react-native";
+import COLORS from '../constants/colors';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 type NetWorthItem = {
-    id: string;
-    name: string;
-    type: "asset" | "liability";
-    category: string;
-    amount: string;
+  id: string;
+  name: string;
+  type: "asset" | "liability";
+  category: string;
+  amount: string;
 };
 
 type Summary = {
-    total_assets: string;
-    total_liabilities: string;
-    net_worth: string;
+  total_assets: string;
+  total_liabilities: string;
+  net_worth: string;
 };
 
 type Props = {
-    token: string;
+  token: string;
 };
 
 export default function NetWorthScreen({ token }: Props) {
-    const [loading, setLoading] = useState(true);
-    const [items, setItems] = useState<NetWorthItem[]>([]);
-    const [summary, setSummary] = useState<Summary>({
-        total_assets: "0",
-        total_liabilities: "0",
-        net_worth: "0",
-    });
-    const [modalVisible, setModalVisible] = useState(false);
-const [name, setName] = useState("");
-const [type, setType] = useState<"asset" | "liability">("asset");
-const [category, setCategory] = useState("");
-const [amount, setAmount] = useState("");
-const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<NetWorthItem[]>([]);
+  const [summary, setSummary] = useState<Summary>({
+    total_assets: "0",
+    total_liabilities: "0",
+    net_worth: "0",
+  });
 
-    const fetchNetWorth = async () => {
-        try {
-            const response = await fetch(`${API_URL}/net-worth`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+  const [showModal, setShowModal] = useState(false);
+  const [editingItem, setEditingItem] = useState<NetWorthItem | null>(null);
 
-            const data = await response.json();
-            console.log("Fetched net worth:", data);
+  const [name, setName] = useState("");
+  const [type, setType] = useState<"asset" | "liability">("asset");
+  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState("");
+  const [saving, setSaving] = useState(false);
 
-            setItems(data.items || []);
-            setSummary(data.summary || {
-                total_assets: "0",
-                total_liabilities: "0",
-                net_worth: "0",
-            });
-        } catch (error) {
-            console.log("Failed to fetch net worth:", error);
-        } finally {
-            setLoading(false);
+  const fetchNetWorth = async () => {
+    try {
+      const response = await fetch(`${API_URL}/net-worth`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        Alert.alert("Error", "Failed to fetch net worth");
+        return;
+      }
+
+      const data = await response.json();
+
+      setItems(data.items || []);
+      setSummary(
+        data.summary || {
+          total_assets: "0",
+          total_liabilities: "0",
+          net_worth: "0",
         }
-    };
-
-    const handleAddItem = async () => {
-  try {
-    setSaving(true);
-
-    const response = await fetch(`${API_URL}/net-worth`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        name,
-        type,
-        category,
-        amount: Number(amount),
-      }),
-    });
-
-    const data = await response.json();
-    console.log("Created net worth item:", data);
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to add net worth item");
+      );
+    } catch (error) {
+      console.error("Fetch net worth error:", error);
+      Alert.alert("Error", "An unexpected error occurred");
+    } finally {
+      setLoading(false);
     }
+  };
 
+  const resetForm = () => {
+    setEditingItem(null);
     setName("");
     setType("asset");
     setCategory("");
     setAmount("");
-    setModalVisible(false);
+  };
 
-    await fetchNetWorth();
-  } catch (error) {
-    console.log("Failed to add item:", error);
-  } finally {
-    setSaving(false);
-  }
-};
+  const openAddModal = () => {
+    resetForm();
+    setShowModal(true);
+  };
 
-    useEffect(() => {
-        fetchNetWorth();
-    }, []);
+  const openEditModal = (item: NetWorthItem) => {
+    setEditingItem(item);
+    setName(item.name);
+    setType(item.type);
+    setCategory(item.category);
+    setAmount(item.amount);
+    setShowModal(true);
+  };
 
-    const formatCurrency = (value: string) => {
-        return `₱${Number(value || 0).toLocaleString()}`;
-    };
+  const closeModal = () => {
+    resetForm();
+    setShowModal(false);
+  };
 
-    if (loading) {
-        return (
-            <View style={styles.center}>
-                <ActivityIndicator />
-            </View>
-        );
+  const validateForm = () => {
+    if (!name.trim()) {
+      Alert.alert("Validation", "Name is required");
+      return false;
     }
 
+    if (!category.trim()) {
+      Alert.alert("Validation", "Category is required");
+      return false;
+    }
+
+    if (!amount.trim()) {
+      Alert.alert("Validation", "Amount is required");
+      return false;
+    }
+
+    const numericAmount = Number(amount);
+
+    if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+      Alert.alert("Validation", "Amount must be greater than 0");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSaveItem = async () => {
+    if (!validateForm()) return;
+
+    try {
+      setSaving(true);
+
+      const isEditing = Boolean(editingItem);
+
+      const response = await fetch(
+        isEditing
+          ? `${API_URL}/net-worth/${editingItem?.id}`
+          : `${API_URL}/net-worth`,
+        {
+          method: isEditing ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            type,
+            category: category.trim(),
+            amount: Number(amount),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        Alert.alert("Error", error.message || "Failed to save net worth item");
+        return;
+      }
+
+      Alert.alert("Success", isEditing ? "Item updated" : "Item added");
+
+      closeModal();
+      await fetchNetWorth();
+    } catch (error) {
+      console.error("Save net worth error:", error);
+      Alert.alert("Error", "An unexpected error occurred");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteItem = (id: string) => {
+    Alert.alert(
+      "Delete Item",
+      "Are you sure you want to delete this net worth item?",
+      [
+        { text: "Cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const response = await fetch(`${API_URL}/net-worth/${id}`, {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+
+              if (!response.ok) {
+                const error = await response.json();
+                Alert.alert(
+                  "Error",
+                  error.message || "Failed to delete net worth item"
+                );
+                return;
+              }
+
+              Alert.alert("Success", "Item deleted");
+              await fetchNetWorth();
+            } catch (error) {
+              console.error("Delete net worth error:", error);
+              Alert.alert("Error", "An unexpected error occurred");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  useEffect(() => {
+    fetchNetWorth();
+  }, []);
+
+  const formatCurrency = (value: string) => {
+    return `₱${Number(value || 0).toFixed(2)}`;
+  };
+
+  if (loading) {
     return (
-        <View style={styles.container}>
-            <View style={styles.card}>
-                <Text style={styles.label}>Total Net Worth</Text>
-                <Text style={styles.netWorth}>
-                    {formatCurrency(summary.net_worth)}
+      <View style={styles.center}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <Text style={styles.logo}>Net Worth</Text>
+        </View>
+
+        <View style={styles.summaryContainer}>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Net Worth</Text>
+            <Text style={styles.balanceAmount}>
+              {formatCurrency(summary.net_worth)}
+            </Text>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Assets</Text>
+            <Text style={styles.incomeAmount}>
+              {formatCurrency(summary.total_assets)}
+            </Text>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Liabilities</Text>
+            <Text style={styles.expenseAmount}>
+              {formatCurrency(summary.total_liabilities)}
+            </Text>
+          </View>
+        </View>
+
+        <FlatList
+          scrollEnabled={false}
+          data={items}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => (
+            <View style={styles.itemCard}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemName}>{item.name}</Text>
+
+                <Text
+                  style={[
+                    styles.itemAmount,
+                    item.type === "asset"
+                      ? styles.incomeText
+                      : styles.expenseText,
+                  ]}
+                >
+                  {item.type === "asset" ? "+" : "-"}
+                  {formatCurrency(item.amount)}
                 </Text>
+              </View>
 
-                <View style={styles.dashboardRow}>
-  <View style={styles.dashboardCard}>
-    <Text style={styles.dashboardLabel}>Assets</Text>
-    <Text style={styles.assetAmount}>
-      {formatCurrency(summary.total_assets)}
-    </Text>
-  </View>
+              <Text style={styles.itemDescription}>
+                {item.type} - {item.category}
+              </Text>
 
-  <View style={styles.dashboardCard}>
-    <Text style={styles.dashboardLabel}>Liabilities</Text>
-    <Text style={styles.liabilityAmount}>
-      {formatCurrency(summary.total_liabilities)}
-    </Text>
-  </View>
-</View>
+              <View style={styles.actionContainer}>
+                <TouchableOpacity
+                  onPress={() => handleDeleteItem(item.id)}
+                  style={styles.deleteButton}
+                >
+                  <Text style={styles.deleteButtonText}>Delete</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => openEditModal(item)}
+                  style={styles.editButton}
+                >
+                  <Text style={styles.editButtonText}>Edit</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+          )}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No net worth items yet</Text>
+            </View>
+          }
+        />
+      </ScrollView>
 
-            <FlatList
-                data={items}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.item}>
-                        <View>
-                            <Text style={styles.itemName}>{item.name}</Text>
-                            <Text style={styles.itemCategory}>
-                                {item.category} • {item.type}
-                            </Text>
-                        </View>
+      <Modal
+        visible={showModal}
+        transparent
+        animationType="fade"
+        presentationStyle="fullScreen"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>
+              {editingItem ? "Edit Net Worth Item" : "Add Net Worth Item"}
+            </Text>
 
-                        <Text
-                            style={
-                                item.type === "asset"
-                                    ? styles.asset
-                                    : styles.liability
-                            }
-                        >
-                            {formatCurrency(item.amount)}
-                        </Text>
-                    </View>
-                )}
-                ListEmptyComponent={
-                    <Text style={styles.empty}>
-                        No net worth items yet.
-                    </Text>
-                }
-            />
-            <Pressable
-    style={styles.fab}
-    onPress={() => setModalVisible(true)}
->
-    <Text style={styles.fabText}>+</Text>
-</Pressable>
-
-<Modal
-    visible={modalVisible}
-    animationType="slide"
-    transparent
->
-    <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add Net Worth Item</Text>
-
-            <TextInput
-                style={styles.input}
+            <View style={styles.formCard}>
+              <TextInput
                 placeholder="Name"
                 value={name}
                 onChangeText={setName}
-            />
-
-            <View style={styles.typeRow}>
-                <Pressable
-                    style={[
-                        styles.typeButton,
-                        type === "asset" && styles.activeTypeButton,
-                    ]}
-                    onPress={() => setType("asset")}
-                >
-                    <Text
-                        style={[
-                            styles.typeButtonText,
-                            type === "asset" && styles.activeTypeButtonText,
-                        ]}
-                    >
-                        Asset
-                    </Text>
-                </Pressable>
-
-                <Pressable
-                    style={[
-                        styles.typeButton,
-                        type === "liability" && styles.activeTypeButton,
-                    ]}
-                    onPress={() => setType("liability")}
-                >
-                    <Text
-                        style={[
-                            styles.typeButtonText,
-                            type === "liability" &&
-                                styles.activeTypeButtonText,
-                        ]}
-                    >
-                        Liability
-                    </Text>
-                </Pressable>
-            </View>
-
-            <TextInput
                 style={styles.input}
+              />
+
+              <TextInput
                 placeholder="Category"
                 value={category}
                 onChangeText={setCategory}
-            />
-
-            <TextInput
                 style={styles.input}
+              />
+
+              <TextInput
                 placeholder="Amount"
                 value={amount}
                 onChangeText={setAmount}
-                keyboardType="numeric"
-            />
+                keyboardType="decimal-pad"
+                style={styles.input}
+              />
 
-            <Pressable
-                style={styles.saveButton}
-                onPress={handleAddItem}
-                disabled={saving}
-            >
-                <Text style={styles.saveButtonText}>
-                    {saving ? "Saving..." : "Save"}
-                </Text>
-            </Pressable>
+              <View style={styles.typeContainer}>
+                {(["asset", "liability"] as const).map((option) => (
+                  <TouchableOpacity
+                    key={option}
+                    onPress={() => setType(option)}
+                    style={[
+                      styles.typeButton,
+                      type === option && styles.activeTypeButton,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.typeButtonText,
+                        type === option && styles.activeTypeButtonText,
+                      ]}
+                    >
+                      {option}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-            <Pressable
-                style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}
-            >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-            </Pressable>
+              <View style={styles.formActionRow}>
+                <TouchableOpacity
+                  onPress={handleSaveItem}
+                  style={styles.primaryButton}
+                  disabled={saving}
+                >
+                  <Text style={styles.primaryButtonText}>
+                    {saving ? "Saving..." : editingItem ? "Update" : "Add"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                <Text style={styles.primaryButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
+      </Modal>
+
+      <TouchableOpacity onPress={openAddModal} style={styles.fab}>
+        <Text style={styles.fabText}>+</Text>
+      </TouchableOpacity>
     </View>
-</Modal>
-        </View>
-    );
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-        backgroundColor: "#F4F7F5",
-    },
-    center: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "700",
-        marginBottom: 16,
-    },
-    card: {
-        backgroundColor: "white",
-        padding: 16,
-        borderRadius: 16,
-        marginBottom: 16,
-    },
-    label: {
-        color: "#6B7280",
-        marginBottom: 4,
-    },
-    netWorth: {
-        fontSize: 32,
-        fontWeight: "800",
-        marginBottom: 16,
-        color: "#166534",
-    },
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    asset: {
-        color: "#15803D",
-        fontWeight: "700",
-    },
-    liability: {
-        color: "#DC2626",
-        fontWeight: "700",
-    },
-    item: {
-        backgroundColor: "white",
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 10,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    itemName: {
-        fontSize: 16,
-        fontWeight: "700",
-    },
-    itemCategory: {
-        color: "#6B7280",
-        marginTop: 4,
-        textTransform: "capitalize",
-    },
-    empty: {
-        textAlign: "center",
-        color: "#6B7280",
-        marginTop: 24,
-    },
-    fab: {
-    position: "absolute",
-    right: 20,
-    bottom: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#166534",
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  center: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-},
-fabText: {
-    color: "white",
-    fontSize: 32,
-    lineHeight: 36,
-},
-modalOverlay: {
+    backgroundColor: COLORS.background,
+  },
+  scrollView: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    paddingHorizontal: 20,
+    paddingTop: 12,
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  header: {
+    marginBottom: 24,
+    paddingHorizontal: 8,
+  },
+  logo: {
+    fontSize: 30,
+    fontWeight: "800",
+    color: COLORS.primaryDark,
+  },
+  summaryContainer: {
+    justifyContent: "space-between",
+    marginBottom: 24,
+    gap: 12,
+    paddingHorizontal: 8,
+  },
+  card: {
+    backgroundColor: COLORS.card,
+    borderRadius: 20,
+    padding: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    elevation: 3,
+  },
+  cardLabel: {
+    color: COLORS.muted,
+    marginBottom: 8,
+  },
+  balanceAmount: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: COLORS.text,
+  },
+  incomeAmount: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: COLORS.income,
+  },
+  expenseAmount: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: COLORS.expense,
+  },
+  listContent: {
+    paddingHorizontal: 8,
+  },
+  itemCard: {
+    marginVertical: 6,
+    backgroundColor: COLORS.card,
+    borderRadius: 20,
+    padding: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    elevation: 3,
+  },
+  itemHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 8,
+  },
+  itemName: {
+    fontWeight: "bold",
+    fontSize: 16,
+    flex: 1,
+  },
+  itemAmount: {
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  incomeText: {
+    color: COLORS.income,
+  },
+  expenseText: {
+    color: COLORS.expense,
+  },
+  itemDescription: {
+    color: COLORS.muted,
+    marginBottom: 12,
+    textTransform: "lowercase",
+  },
+  actionContainer: {
+    flexDirection: "row",
+    gap: 8,
     justifyContent: "flex-end",
-},
-modalContent: {
-    backgroundColor: "white",
-    padding: 20,
+  },
+  deleteButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: COLORS.dangerBg,
+  },
+  deleteButtonText: {
+    color: COLORS.dangerText,
+    fontWeight: "600",
+  },
+  editButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: "#E5E7EB",
+  },
+  editButtonText: {
+    color: COLORS.text,
+    fontWeight: "600",
+  },
+  emptyContainer: {
+    backgroundColor: COLORS.card,
+    borderRadius: 8,
+    padding: 32,
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#999999",
+    fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "flex-end",
+  },
+  modalContainer: {
+    backgroundColor: COLORS.card,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-},
-modalTitle: {
+    padding: 20,
+  },
+  modalTitle: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: "bold",
     marginBottom: 16,
-},
-input: {
+  },
+  formCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: 20,
+    padding: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    elevation: 3,
+  },
+  input: {
     borderWidth: 1,
-    borderColor: "#D1D5DB",
-    borderRadius: 12,
+    borderColor: "#DDDDDD",
+    borderRadius: 8,
     padding: 12,
     marginBottom: 12,
-},
-typeRow: {
+    backgroundColor: "#F9F9F9",
+  },
+  typeContainer: {
     flexDirection: "row",
     gap: 8,
     marginBottom: 12,
-},
-typeButton: {
+  },
+  typeButton: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderRadius: 8,
+    backgroundColor: "#E5E7EB",
     alignItems: "center",
-},
-activeTypeButton: {
-    backgroundColor: "#166534",
-    borderColor: "#166534",
-},
-typeButtonText: {
-    color: "#374151",
-    fontWeight: "600",
-},
-activeTypeButtonText: {
-    color: "white",
-},
-saveButton: {
-    backgroundColor: "#166534",
-    padding: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 4,
-},
-saveButtonText: {
-    color: "white",
-    fontWeight: "700",
-},
-cancelButton: {
+  },
+  activeTypeButton: {
+    backgroundColor: COLORS.primary,
+  },
+  typeButtonText: {
+    fontWeight: "500",
+    color: COLORS.text,
+    textTransform: "capitalize",
+  },
+  activeTypeButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+  },
+  formActionRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    borderRadius: 16,
     padding: 14,
     alignItems: "center",
-},
-cancelButtonText: {
-    color: "#6B7280",
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  closeButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 16,
+    padding: 14,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  fab: {
+    position: "absolute",
+    right: 24,
+    bottom: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+  },
+  fabText: {
+    color: "#FFFFFF",
+    fontSize: 32,
     fontWeight: "600",
-},
-dashboardRow: {
-  flexDirection: "row",
-  gap: 12,
-},
-
-dashboardCard: {
-  flex: 1,
-  backgroundColor: "#F9FAFB",
-  padding: 14,
-  borderRadius: 14,
-  borderWidth: 1,
-  borderColor: "#E5E7EB",
-},
-
-dashboardLabel: {
-  color: "#6B7280",
-  fontSize: 13,
-  marginBottom: 6,
-},
-
-assetAmount: {
-  color: "#15803D",
-  fontSize: 18,
-  fontWeight: "800",
-},
-
-liabilityAmount: {
-  color: "#DC2626",
-  fontSize: 18,
-  fontWeight: "800",
-},
+  },
 });
