@@ -9,6 +9,7 @@ import {
   ScrollView,
   Modal,
   StyleSheet,
+  KeyboardAvoidingView,
 } from "react-native";
 import Transaction from "../../types/transaction";
 import Category from "../../types/category";
@@ -361,13 +362,16 @@ export default function HomeDashboardScreen({ token }: Props) {
         presentationStyle="fullScreen"
         onRequestClose={closeTransactionModal}
       >
+        <KeyboardAvoidingView 
+        style={{flex: 1}} 
+        behavior="padding">
         <View style={styles.modalOverlay}>
           <View style={styles.transactionModalContainer}>
             <Text style={styles.modalTitle}>
               {editingId ? "Edit Transaction" : "Add Transaction"}
             </Text>
 
-            <View style={styles.formCard}>
+            <View>
               <TextInput
                 placeholder="Description"
                 value={description}
@@ -517,6 +521,7 @@ export default function HomeDashboardScreen({ token }: Props) {
                         </View>
                       </View>
                     </View>
+                    
                   </Modal>
                 </View>
               </View>
@@ -531,14 +536,6 @@ export default function HomeDashboardScreen({ token }: Props) {
                   </Text>
                 </TouchableOpacity>
 
-                {editingId && (
-                  <TouchableOpacity
-                    onPress={handleCancelEdit}
-                    style={styles.primaryButton}
-                  >
-                    <Text style={styles.primaryButtonText}>Cancel</Text>
-                  </TouchableOpacity>
-                )}
               </View>
 
               <TouchableOpacity
@@ -550,6 +547,7 @@ export default function HomeDashboardScreen({ token }: Props) {
             </View>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <TouchableOpacity onPress={openAddModal} style={styles.fab}>

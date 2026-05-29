@@ -10,6 +10,7 @@ import {
   Modal,
   StyleSheet,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from "react-native";
 import COLORS from "../constants/colors";
 
@@ -350,13 +351,14 @@ export default function NetWorthScreen({ token }: Props) {
         presentationStyle="fullScreen"
         onRequestClose={closeModal}
       >
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>
-              {editingItem ? "Edit Net Worth Item" : "Add Net Worth Item"}
+              {editingItem ? "Edit Net Worth Item" : "Add Net Worth"}
             </Text>
 
-            <View style={styles.formCard}>
+            <View>
               <TextInput
                 placeholder="Name"
                 value={name}
@@ -475,6 +477,7 @@ export default function NetWorthScreen({ token }: Props) {
             </View>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <TouchableOpacity onPress={openAddModal} style={styles.fab}>
